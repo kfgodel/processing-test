@@ -29,7 +29,7 @@ public class FpsMeasurer {
         long elapsed = getCurrentMillis() - startMoment;
         if(elapsed > 1000){
             //Update fps every second so the value doesn't change between seconds
-            currentFps = frameCount / (elapsed * 1000d);
+            currentFps = (frameCount * 1000d) / elapsed;
             start();
         }
         return currentFps;
