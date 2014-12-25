@@ -1,23 +1,21 @@
-package app;
+package app.ar.com.dgarcia.processing.stress;
 
 import app.ar.com.dgarcia.processing.FpsMeasurer;
 import processing.core.PApplet;
 import processing.core.PFont;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
+ * This sketch tries to measure fps on the most basic processing setup
  * Created by ikari on 24/12/2014.
  */
-public class FpsConBackgroundProcessing extends PApplet {
+public class FpsVacio extends PApplet {
 
     private PFont font;
     private FpsMeasurer fps;
     private long lastDrawMoment;
-    private AtomicLong contador = new AtomicLong(0);
 
     static public void main(String args[]) {
-        PApplet.main(new String[] { FpsConBackgroundProcessing.class.getName() });
+        PApplet.main(new String[] { FpsVacio.class.getName() });
     }
 
     public void setup() {
@@ -29,11 +27,6 @@ public class FpsConBackgroundProcessing extends PApplet {
         fill(0);
         fps = FpsMeasurer.create();
         frameRate(100000);
-        new Thread(()->{
-            while(true){
-                contador.incrementAndGet();
-            }
-        }).start();
     }
 
     @Override
@@ -46,7 +39,6 @@ public class FpsConBackgroundProcessing extends PApplet {
         }
         lastDrawMoment = currentMoment;
         background(255);
-        text(String.format("FPS: %.3f - contador: %d", fps.getCurrentFps(), contador.getAndSet(0)) ,10,100);
+        text(String.format("FPS: %.3f", fps.getCurrentFps()) ,10,100);
     }
-
 }
