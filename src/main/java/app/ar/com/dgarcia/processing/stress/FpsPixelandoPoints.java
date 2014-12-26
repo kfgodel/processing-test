@@ -8,14 +8,15 @@ import processing.core.PFont;
  * This type tests the drawing capabilities painting the screen with one pixel at the time
  * Created by ikari on 25/12/2014.
  */
-public class FpsPixelando extends PApplet {
+public class FpsPixelandoPoints extends PApplet {
 
     static public void main(String args[]) {
-        PApplet.main(new String[] { FpsPixelando.class.getName() });
+        PApplet.main(new String[] { FpsPixelandoPoints.class.getName() });
     }
 
     private PFont font;
     private FpsMeasurer fps;
+    private long lastDrawMoment;
     private int color = 255;
 
     public void setup() {
@@ -24,6 +25,7 @@ public class FpsPixelando extends PApplet {
         smooth();
         font = createFont("Arial", 16, true);
         textFont(font, 22);
+        fill(0);
         fps = FpsMeasurer.create();
         frameRate(100000);
         background(255);
@@ -33,16 +35,12 @@ public class FpsPixelando extends PApplet {
     public void draw() {
         fps.startingFrame();
 
-        // Before we deal with pixels
-        loadPixels();
-        // Loop through every pixel
-        for (int i = 0; i < pixels.length; i++) {
-            // Set pixel at that location to random color
-            pixels[i] = color(color);
+        stroke(color);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                point(x, y);
+            }
         }
-        // When we are finished dealing with pixels
-        updatePixels();
-
         color += 10;
         if(color > 255){
             color = 0;

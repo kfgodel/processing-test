@@ -24,6 +24,7 @@ public class ImagesAndPixels extends PApplet {
     public void draw() {
         background(0);
         // Draw the image to the screen at coordinate (0,0)
+        tint(128,128);
         image(img,0,0);
     }
 
