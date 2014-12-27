@@ -49,8 +49,8 @@ public class IncrementingTriangles extends PApplet {
                 beginShape();
                 vertex(   0,    0,  0);
                 vertex(10, 0, 0);
-                vertex( 5, -10, 0);
-                endShape();
+                vertex(5, -10, 0);
+                endShape(CLOSE);
                 popMatrix();
             }
 
