@@ -13,6 +13,7 @@ public class TextTutorial extends PApplet {
     }
 
     PFont f;                          // STEP 2 Declare PFont variable
+    float theta;
 
     public void setup() {
         size(1024,768);
@@ -51,5 +52,10 @@ public class TextTutorial extends PApplet {
         text("This text is right aligned.", width / 2, 140);
         float rightWidth = textWidth("This text is right aligned.");
         line(width / 2 - rightWidth, 140, width / 2 , 140);
+
+        translate(width/2,height/2);  // Translate to the center
+        rotate(theta -= 0.001);                // Rotate by theta
+        textAlign(CENTER);
+        text("Watching the wheels",0,0);
     }
 }
