@@ -15,7 +15,7 @@ public class SelectionSketch extends PApplet {
 
     private int fillColor;
 
-    private int selectionColor = color(248, 255, 199);
+    private int selectionColor = color(248, 255, 170);
 
     private List<SelectableCircle> circles;
     private Set<SelectableCircle> selected;
@@ -41,14 +41,25 @@ public class SelectionSketch extends PApplet {
         rect(0,0,1024,768);
 
 
+
         PVector mousePosition = getMouseVector();
         for (SelectableCircle circle : circles) {
-            if(selected.contains(circle) || circle.touches(mousePosition) ){
-                stroke(selectionColor);
-                int selectionWidth = 3;
-                strokeWeight(selectionWidth);
-                noFill();
-                ellipse(circle.getPosition().x, circle.getPosition().y, circle.getSize().x + selectionWidth + circle.getBorderWidth(), circle.getSize().y + selectionWidth + circle.getBorderWidth());
+
+            stroke(selectionColor);
+            int selectionWidth = 3;
+            strokeWeight(selectionWidth);
+            noFill();
+
+            if(selected.contains(circle) ){
+                ellipse(circle.getPosition().x, circle.getPosition().y,
+                        circle.getSize().x + selectionWidth + circle.getBorderWidth(), circle.getSize().y + selectionWidth + circle.getBorderWidth());
+            } else if (circle.touches(mousePosition)){
+                arc(circle.getPosition().x, circle.getPosition().y,
+                        circle.getSize().x + selectionWidth + circle.getBorderWidth(), circle.getSize().y + selectionWidth + circle.getBorderWidth(),
+                        -QUARTER_PI, QUARTER_PI);
+                arc(circle.getPosition().x, circle.getPosition().y,
+                        circle.getSize().x + selectionWidth + circle.getBorderWidth(), circle.getSize().y + selectionWidth + circle.getBorderWidth(),
+                        3*QUARTER_PI, 5*QUARTER_PI);
             }
             circle.drawOn(this);
         }
@@ -69,6 +80,14 @@ public class SelectionSketch extends PApplet {
                     selected.add(circle);
                 }
             }
+        }
+    }
+
+    @Override
+    public void mouseDragged() {
+        PVector displacement = new PVector(mouseX - pmouseX, mouseY - pmouseY);
+        for (SelectableCircle circle : selected) {
+            circle.getPosition().add(displacement);
         }
     }
 }

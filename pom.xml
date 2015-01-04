@@ -135,14 +135,14 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                         </manifest>
+                        <manifestEntries>
+                            <Build-JVM>${java.vm.name} - ${java.vm.vendor}</Build-JVM>
+                            <Build-OS>${os.name} - Version: ${os.version}</Build-OS>
+                            <Application-GroupId>${project.groupId}</Application-GroupId>
+                            <Application-Artifact>${project.artifactId}</Application-Artifact>
+                            <Application-Version>${project.version}</Application-Version>
+                        </manifestEntries>
                     </archive>
-                    <manifestEntries>
-                        <Build-JVM>${java.vm.name} - ${java.vm.vendor}</Build-JVM>
-                        <Build-OS>${os.name} - Version: ${os.version}</Build-OS>
-                        <Application-GroupId>${project.groupId}</Application-GroupId>
-                        <Application-Artifact>${project.artifactId}</Application-Artifact>
-                        <Application-Version>${project.version}</Application-Version>
-                    </manifestEntries>
                 </configuration>
             </plugin>
 
@@ -201,6 +201,14 @@
     </pluginRepositories>
 
     <dependencies>
+
+
+        <!-- Widgets de UI para processing -->
+        <dependency>
+            <groupId>sojamo.de</groupId>
+            <artifactId>controlP5</artifactId>
+            <version>2.0.4</version>
+        </dependency>
 
         <!-- Clases bases de processing -->
         <dependency>
