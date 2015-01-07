@@ -203,11 +203,25 @@
     <dependencies>
 
 
-        <!-- Widgets de UI para processing -->
+        <!-- Widgets de UI para processing controlP5 -->
         <dependency>
             <groupId>sojamo.de</groupId>
             <artifactId>controlP5</artifactId>
             <version>2.0.4</version>
+        </dependency>
+
+        <!-- Otros controles g4p -->
+        <dependency>
+            <groupId>lagers.org.uk</groupId>
+            <artifactId>g4p</artifactId>
+            <version>3.5</version>
+        </dependency>
+
+        <!-- Yet another gui -->
+        <dependency>
+            <groupId>com.github.fjenett</groupId>
+            <artifactId>guido</artifactId>
+            <version>0.0.5</version>
         </dependency>
 
         <!-- Clases bases de processing -->
