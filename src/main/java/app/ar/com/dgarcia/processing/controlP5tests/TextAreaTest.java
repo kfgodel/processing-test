@@ -1,5 +1,6 @@
 package app.ar.com.dgarcia.processing.controlP5tests;
 
+import controlP5.ControlEvent;
 import controlP5.ControlP5;
 import controlP5.Textarea;
 import processing.core.PApplet;
@@ -27,7 +28,7 @@ public class TextAreaTest extends PApplet {
                 .setLineHeight(14)
                 .setColor(color(128))
                 .setColorBackground(color(255,100))
-                .setColorForeground(color(255,100));
+                .setColorForeground(color(255,100))
         ;
         myTextarea.setText("Lorem Ipsum is simply dummy text of the printing and typesetting"
                         +" industry. Lorem Ipsum has been the industry's standard dummy text"
@@ -56,6 +57,9 @@ public class TextAreaTest extends PApplet {
 
     }
 
+    public void controlEvent(ControlEvent theEvent) {
+        println(theEvent.arrayValue());
+    }
 
     public void keyPressed() {
         if(key=='r') {
@@ -79,10 +83,10 @@ public class TextAreaTest extends PApplet {
     }
     public void draw() {
         background(0);
-        if(keyPressed && key==' ') {
+        if(keyPressed && key=='1') {
             myTextarea.scroll((float)mouseX/(float)width);
         }
-        if(keyPressed && key=='l') {
+        if(keyPressed && key==' ') {
             myTextarea.setLineHeight(mouseY);
         }
     }

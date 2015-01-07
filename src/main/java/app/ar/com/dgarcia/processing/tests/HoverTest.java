@@ -22,18 +22,18 @@ public class HoverTest extends PApplet {
 
     @Override
     public void setup() {
-        size(1024,768);
-
-        background(200);
+        size(1024, 768);
 
         createSquares();
-        drawSquares();
-
         movementHandler = this::noActiveHover;
     }
 
     @Override
     public void draw() {
+        background(200);
+        drawSquares();
+        fill(255);
+        text("FPS: " + frameRate, 0, 30);
         mouseMoved();
     }
 
@@ -81,7 +81,7 @@ public class HoverTest extends PApplet {
 
     private void createSquares() {
         Random rand = new Random(0);
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10000; i++) {
             float x = rand.nextFloat() * width;
             float y = rand.nextFloat() * height;
             float size = rand.nextFloat() * 100f;
