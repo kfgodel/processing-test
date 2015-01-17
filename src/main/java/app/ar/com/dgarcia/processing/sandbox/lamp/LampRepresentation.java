@@ -28,6 +28,7 @@ public class LampRepresentation {
     }
 
     public static void drawInactiveOn(PApplet applet, Point2d position) {
+        applet.strokeWeight(1);
         applet.stroke(80);
         applet.fill(187);
         applet.ellipse(position.getX().getAsInt(), position.getY().getAsInt(), lampDiameter(), lampDiameter());

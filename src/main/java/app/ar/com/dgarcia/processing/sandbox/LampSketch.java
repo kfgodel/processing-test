@@ -1,10 +1,10 @@
 package app.ar.com.dgarcia.processing.sandbox;
 
 import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
-import app.ar.com.dgarcia.processing.sandbox.interruptor.InterruptorRepresentation;
+import app.ar.com.dgarcia.processing.sandbox.interruptor.DynamicInterruptor;
+import app.ar.com.dgarcia.processing.sandbox.interruptor.Interruptor;
 import app.ar.com.dgarcia.processing.sandbox.lamp.DynamicLamp;
 import app.ar.com.dgarcia.processing.sandbox.lamp.Lamp;
-import app.ar.com.dgarcia.processing.sandbox.lamp.LampRepresentation;
 import processing.core.PApplet;
 
 /**
@@ -18,25 +18,22 @@ public class LampSketch extends PApplet {
     }
 
     private Lamp dynamicLamp;
+    private Interruptor dynamicInterruptor;
 
     @Override
     public void setup() {
         size(1024,768);
 
         dynamicLamp = DynamicLamp.create(Point2d.centerOf(this).toTheTop(50));
+        dynamicInterruptor = DynamicInterruptor.create(Point2d.centerOf(this).toTheBottom(50));
     }
 
     private void drawFrame() {
         background(200);
         GridRepresentation.drawOn(this);
 
-        Point2d fromCenterPoint = Point2d.centerOf(this);
-        LampRepresentation.drawActiveOn(this, fromCenterPoint.toTheRight(30));
-        LampRepresentation.drawInactiveOn(this, fromCenterPoint.toTheLeft(30));
         dynamicLamp.drawOn(this);
-
-        InterruptorRepresentation.drawActiveOn(this, fromCenterPoint.toTheBottom(50));
-        InterruptorRepresentation.drawInactiveOn(this, fromCenterPoint.toTheBottom(50).toTheLeft(50));
+        dynamicInterruptor.drawOn(this);
     }
 
     @Override
@@ -46,6 +43,8 @@ public class LampSketch extends PApplet {
 
     @Override
     public void mouseClicked() {
+
         dynamicLamp.toggle();
+        dynamicInterruptor.toggle();
     }
 }
