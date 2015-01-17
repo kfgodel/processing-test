@@ -2,31 +2,14 @@ package app.ar.com.dgarcia.processing.sandbox;
 
 import processing.core.PApplet;
 
-import java.util.function.BiConsumer;
-
 /**
  * This type represents a lamp that can change its on/off state and the according representation
  * Created by ikari on 16/01/2015.
  */
 public class DynamicLamp extends StatefulObject implements Lamp {
 
-    public static final String TOGGLE_BEHAVIOR = "TOGGLE_BEHAVIOR";
-    public static final String DRAW_BEHAVIOR = "DRAW_BEHAVIOR";
+    public static final String STATUS = "STATUS";
     public static final String POSITION = "POSITION";
-
-    private Runnable getToggleBehavior(){
-        return getState().getPart(TOGGLE_BEHAVIOR);
-    }
-    private void setToggleBehavior(Runnable toggleBehavior) {
-        getState().setPart(TOGGLE_BEHAVIOR, toggleBehavior);
-    }
-
-    private BiConsumer<PApplet, Point2d> getDrawBehavior(){
-        return getState().getPart(DRAW_BEHAVIOR);
-    }
-    private void setDrawBehavior(BiConsumer<PApplet, Point2d> drawBehavior) {
-        getState().setPart(DRAW_BEHAVIOR, drawBehavior);
-    }
 
     private Point2d getPosition(){
         return getState().getPart(POSITION);
@@ -35,30 +18,27 @@ public class DynamicLamp extends StatefulObject implements Lamp {
         getState().setPart(POSITION, position);
     }
 
+    private LampStatus getStatus() {
+        return getState().<LampStatus>getPart(STATUS);
+    }
+    public void setStatus(LampStatus status) {
+        getState().setPart(STATUS, status);
+    }
+
     @Override
     public void toggle() {
-        getToggleBehavior().run();
+        getStatus().toggle(this);
     }
 
     @Override
     public void drawOn(PApplet applet) {
-        getDrawBehavior().accept(applet, getPosition());
-    }
-
-    private void toggleOn(){
-        setDrawBehavior(LampRepresentation::drawActiveOn);
-        setToggleBehavior(this::toggleOff);
-    }
-
-    private void toggleOff(){
-        setDrawBehavior(LampRepresentation::drawInactiveOn);
-        setToggleBehavior(this::toggleOn);
+        getStatus().drawOn(applet, getPosition());
     }
 
     public static DynamicLamp create(Point2d position) {
         DynamicLamp lamp = new DynamicLamp();
         lamp.setPosition(position);
-        lamp.toggleOff();
+        LampStatus.ON.toggle(lamp);
         return lamp;
     }
 
