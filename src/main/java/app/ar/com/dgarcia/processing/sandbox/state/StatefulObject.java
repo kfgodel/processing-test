@@ -1,4 +1,4 @@
-package app.ar.com.dgarcia.processing.sandbox;
+package app.ar.com.dgarcia.processing.sandbox.state;
 
 /**
  * This type serves as a base class for objects that require an internal state

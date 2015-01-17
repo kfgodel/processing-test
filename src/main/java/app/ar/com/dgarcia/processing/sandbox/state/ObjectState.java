@@ -1,4 +1,4 @@
-package app.ar.com.dgarcia.processing.sandbox;
+package app.ar.com.dgarcia.processing.sandbox.state;
 
 /**
  * This type represents a generic representation of an object internal state, that can change during runtime.<br>

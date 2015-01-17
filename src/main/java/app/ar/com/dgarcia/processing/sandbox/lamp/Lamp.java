@@ -1,4 +1,4 @@
-package app.ar.com.dgarcia.processing.sandbox;
+package app.ar.com.dgarcia.processing.sandbox.lamp;
 
 import processing.core.PApplet;
 

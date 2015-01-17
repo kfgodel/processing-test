@@ -1,5 +1,10 @@
 package app.ar.com.dgarcia.processing.sandbox;
 
+import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
+import app.ar.com.dgarcia.processing.sandbox.interruptor.InterruptorRepresentation;
+import app.ar.com.dgarcia.processing.sandbox.lamp.DynamicLamp;
+import app.ar.com.dgarcia.processing.sandbox.lamp.Lamp;
+import app.ar.com.dgarcia.processing.sandbox.lamp.LampRepresentation;
 import processing.core.PApplet;
 
 /**
@@ -23,10 +28,15 @@ public class LampSketch extends PApplet {
 
     private void drawFrame() {
         background(200);
+        GridRepresentation.drawOn(this);
+
         Point2d fromCenterPoint = Point2d.centerOf(this);
         LampRepresentation.drawActiveOn(this, fromCenterPoint.toTheRight(30));
         LampRepresentation.drawInactiveOn(this, fromCenterPoint.toTheLeft(30));
         dynamicLamp.drawOn(this);
+
+        InterruptorRepresentation.drawActiveOn(this, fromCenterPoint.toTheBottom(50));
+        InterruptorRepresentation.drawInactiveOn(this, fromCenterPoint.toTheBottom(50).toTheLeft(50));
     }
 
     @Override

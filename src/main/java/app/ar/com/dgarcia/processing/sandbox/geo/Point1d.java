@@ -1,4 +1,4 @@
-package app.ar.com.dgarcia.processing.sandbox;
+package app.ar.com.dgarcia.processing.sandbox.geo;
 
 import processing.core.PApplet;
 
@@ -16,7 +16,7 @@ public interface Point1d extends IntSupplier {
      * @return The point that represents the value
      */
     static Point1d horizontalCenterOf(PApplet applet) {
-        return halfOf(applet.width);
+        return ()-> halfOf(applet.width);
     }
 
     /**
@@ -25,15 +25,15 @@ public interface Point1d extends IntSupplier {
      * @return The point that represents the value
      */
     static Point1d verticalCenterOf(PApplet applet) {
-        return halfOf(applet.height);
+        return ()->halfOf(applet.height);
     }
 
     /**
      * @param total Value that represents a unity
      * @return A value that represents half of the unity
      */
-    static Point1d halfOf(int total) {
-        return ()-> total / 2;
+    static int halfOf(int total) {
+        return total / 2;
     }
 
     /**

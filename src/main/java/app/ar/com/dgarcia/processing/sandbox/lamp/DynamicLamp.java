@@ -1,5 +1,7 @@
-package app.ar.com.dgarcia.processing.sandbox;
+package app.ar.com.dgarcia.processing.sandbox.lamp;
 
+import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
+import app.ar.com.dgarcia.processing.sandbox.state.StatefulObject;
 import processing.core.PApplet;
 
 /**

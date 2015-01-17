@@ -1,5 +1,6 @@
-package app.ar.com.dgarcia.processing.sandbox;
+package app.ar.com.dgarcia.processing.sandbox.lamp;
 
+import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
 import processing.core.PApplet;
 
 /**
@@ -13,13 +14,10 @@ public class LampRepresentation {
      * @param applet The drawing canvas
      */
     public static void drawActiveOn(PApplet applet, Point2d position) {
+        applet.strokeWeight(1);
         applet.stroke(0);
         applet.fill(255, 247, 159);
-        applet.ellipse(centeredIn(position.getX()), centeredIn(position.getY()), lampDiameter(), lampDiameter());
-    }
-
-    private static float centeredIn(Point1d point) {
-        return  point.getAsInt() - lampRadius();
+        applet.ellipse(position.getX().getAsInt(), position.getY().getAsInt(), lampDiameter(), lampDiameter());
     }
 
     /**
@@ -32,7 +30,7 @@ public class LampRepresentation {
     public static void drawInactiveOn(PApplet applet, Point2d position) {
         applet.stroke(80);
         applet.fill(187);
-        applet.ellipse(position.getX().getAsInt() - lampRadius(), position.getY().getAsInt() - lampRadius(), lampDiameter(), lampDiameter());
+        applet.ellipse(position.getX().getAsInt(), position.getY().getAsInt(), lampDiameter(), lampDiameter());
     }
 
     /**

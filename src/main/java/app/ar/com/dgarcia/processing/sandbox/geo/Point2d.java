@@ -1,4 +1,4 @@
-package app.ar.com.dgarcia.processing.sandbox;
+package app.ar.com.dgarcia.processing.sandbox.geo;
 
 import processing.core.PApplet;
 
@@ -35,6 +35,10 @@ public interface Point2d {
 
     default Point2d toTheTop(int topOffset){
         return  create(this.getX(), this.getY().minus(topOffset));
+    };
+
+    default Point2d toTheBottom(int bottomOffset){
+        return  create(this.getX(), this.getY().plus(bottomOffset));
     };
 
     static Point2d centerOf(PApplet applet) {
