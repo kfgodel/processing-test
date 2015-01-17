@@ -6,7 +6,7 @@ import processing.core.PApplet;
  * This type represents the ways a lamp interacts with world
  * Created by ikari on 13/01/2015.
  */
-public class LampBehavior {
+public class LampRepresentation {
 
     /**
      * Draws the lamp as turned on in the given applet

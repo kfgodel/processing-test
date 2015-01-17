@@ -18,14 +18,14 @@ public class LampSketch extends PApplet {
     public void setup() {
         size(1024,768);
 
-        dynamicLamp = LampState.create(Point2d.centerOf(this).toTheTop(50));
+        dynamicLamp = DynamicLamp.create(Point2d.centerOf(this).toTheTop(50));
     }
 
     private void drawFrame() {
         background(200);
         Point2d fromCenterPoint = Point2d.centerOf(this);
-        LampBehavior.drawActiveOn(this, fromCenterPoint.toTheRight(30));
-        LampBehavior.drawInactiveOn(this, fromCenterPoint.toTheLeft(30));
+        LampRepresentation.drawActiveOn(this, fromCenterPoint.toTheRight(30));
+        LampRepresentation.drawInactiveOn(this, fromCenterPoint.toTheLeft(30));
         dynamicLamp.drawOn(this);
     }
 
