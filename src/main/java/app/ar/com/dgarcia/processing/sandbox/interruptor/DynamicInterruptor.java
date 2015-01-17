@@ -36,6 +36,15 @@ public class DynamicInterruptor extends StatefulObject implements Interruptor {
         getStatus().drawOn(applet, getPosition());
     }
 
+    @Override
+    public boolean collisions(Point2d mousePosition) {
+        Point2d distance = mousePosition.relativeTo(getPosition()).absolutize();
+        boolean insideHeight = distance.getY().getAsInt() < InterruptorRepresentation.interruptorHeight() / 2;
+        boolean insideWidth = distance.getX().getAsInt() < InterruptorRepresentation.interruptorWidth() / 2;
+        return insideHeight && insideWidth;
+    }
+
+
     public static DynamicInterruptor create(Point2d position) {
         DynamicInterruptor interruptor = new DynamicInterruptor();
         interruptor.setPosition(position);

@@ -1,5 +1,6 @@
 package app.ar.com.dgarcia.processing.sandbox.interruptor;
 
+import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
 import processing.core.PApplet;
 
 /**
@@ -11,4 +12,5 @@ public interface Interruptor {
 
     void drawOn(PApplet applet);
 
+    boolean collisions(Point2d mousePosition);
 }

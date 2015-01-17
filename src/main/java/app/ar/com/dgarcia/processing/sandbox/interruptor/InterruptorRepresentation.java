@@ -19,7 +19,7 @@ public class InterruptorRepresentation {
         drawState(applet, position, false);
     }
 
-    private static void drawState(PApplet applet, Point2d position, boolean active) {
+    public static void drawState(PApplet applet, Point2d position, boolean active) {
         applet.noStroke();
         applet.fill(96, 145, 156);
 
@@ -33,7 +33,7 @@ public class InterruptorRepresentation {
         applet.rect(horizontalPosition, verticalPosition, buttonWidth(), stateHeight());
     }
 
-    private static void drawInterruptorBase(PApplet applet, Point2d position) {
+    public static void drawInterruptorBase(PApplet applet, Point2d position) {
         applet.stroke(0);
         applet.fill(176, 213, 224);
         drawBox(applet, position, interruptorWidth(), interruptorHeight());
@@ -42,35 +42,35 @@ public class InterruptorRepresentation {
         drawBox(applet, position, buttonWidth(), buttonHeight());
     }
 
-    private static void drawBox(PApplet applet, Point2d position, int width, int height) {
+    public static void drawBox(PApplet applet, Point2d position, int width, int height) {
         applet.rect(horizontallyCenteredOn(position.getX(), width), verticallyCenteredOn(position.getY(), height), width, height);
     }
 
-    private static int stateHeight() {
+    public static int stateHeight() {
         return buttonHeight() / 2;
     }
 
-    private static int buttonWidth(){
+    public static int buttonWidth(){
         return (int) (interruptorWidth() * 0.4);
     }
 
-    private static int buttonHeight(){
+    public static int buttonHeight(){
         return (int) (interruptorHeight() * 0.6);
     }
 
-    private static int interruptorHeight() {
+    public static int interruptorHeight() {
         return 50;
     }
 
-    private static int interruptorWidth() {
+    public static int interruptorWidth() {
         return 40;
     }
 
-    private static float verticallyCenteredOn(Point1d positionY, int height) {
+    public static float verticallyCenteredOn(Point1d positionY, int height) {
         return positionY.getAsInt() - Point1d.halfOf(height);
     }
 
-    private static int horizontallyCenteredOn(Point1d positionX, int width) {
+    public static int horizontallyCenteredOn(Point1d positionX, int width) {
         return positionX.getAsInt() - Point1d.halfOf(width);
     }
 }

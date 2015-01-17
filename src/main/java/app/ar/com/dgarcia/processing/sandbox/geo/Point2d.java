@@ -45,4 +45,11 @@ public interface Point2d {
         return create(Point1d.horizontalCenterOf(applet), Point1d.verticalCenterOf(applet));
     }
 
+    default Point2d relativeTo(Point2d position){
+        return create(getX().minus(position.getX().getAsInt()), getY().minus(position.getY().getAsInt()));
+    }
+
+    default Point2d absolutize(){
+        return Point2d.create(getX().absolutize(), getY().absolutize());
+    };
 }

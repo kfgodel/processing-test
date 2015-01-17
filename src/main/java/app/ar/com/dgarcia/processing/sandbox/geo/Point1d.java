@@ -53,4 +53,10 @@ public interface Point1d extends IntSupplier {
     default Point1d minus(int subtraction){
         return ()-> this.getAsInt() - subtraction;
     };
+
+    default Point1d absolutize(){
+        return ()-> Math.abs(getAsInt());
+    };
+
+
 }

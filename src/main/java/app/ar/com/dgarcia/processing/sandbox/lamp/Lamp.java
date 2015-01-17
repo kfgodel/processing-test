@@ -13,4 +13,5 @@ public interface Lamp {
     void toggle();
 
     void drawOn(PApplet applet);
+
 }
