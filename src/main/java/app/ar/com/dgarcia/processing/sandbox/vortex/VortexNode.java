@@ -5,9 +5,12 @@ package app.ar.com.dgarcia.processing.sandbox.vortex;
  * Created by ikari on 17/01/2015.
  */
 public interface VortexNode {
-    VortexTunnel createReceptionTunnel();
 
-    void returnReceptionTunnel(VortexTunnel tunnel);
+    VortexProducer declareProducer(ProducerManifest producerManifest);
 
-    void addEndpoint(VortexEndpoint endpoint);
+    void retireProducer(VortexProducer addedProducer);
+
+    VortexConsumer declareConsumer(ConsumerManifest consumerManifest);
+
+    void retireConsumer(VortexConsumer addedConsumer);
 }
