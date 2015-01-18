@@ -7,11 +7,11 @@ import processing.core.PApplet;
  * Created by ikari on 15/01/2015.
  */
 public interface Lamp {
-    /**
-     * Inverts the state of this lamp
-     */
-    void toggle();
 
     void drawOn(PApplet applet);
+
+    void turnOn();
+
+    void turnOff();
 
 }

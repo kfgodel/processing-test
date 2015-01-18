@@ -10,7 +10,7 @@ public enum InterruptorStatus {
     ON{
         @Override
         public void toggle(DynamicInterruptor dynamicInterruptor) {
-            dynamicInterruptor.setStatus(OFF);
+            dynamicInterruptor.turnOff();
         }
 
         @Override
@@ -21,7 +21,7 @@ public enum InterruptorStatus {
     OFF{
         @Override
         public void toggle(DynamicInterruptor dynamicInterruptor) {
-            dynamicInterruptor.setStatus(ON);
+            dynamicInterruptor.turnOn();
         }
 
         @Override

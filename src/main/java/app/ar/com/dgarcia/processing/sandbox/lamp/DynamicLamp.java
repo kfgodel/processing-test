@@ -2,6 +2,7 @@ package app.ar.com.dgarcia.processing.sandbox.lamp;
 
 import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
 import app.ar.com.dgarcia.processing.sandbox.state.StatefulObject;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexNode;
 import processing.core.PApplet;
 
 /**
@@ -10,6 +11,7 @@ import processing.core.PApplet;
  */
 public class DynamicLamp extends StatefulObject implements Lamp {
 
+    public static final String VORTEX_NODE = "VORTEX_NODE";
     public static final String STATUS = "STATUS";
     public static final String POSITION = "POSITION";
 
@@ -27,9 +29,22 @@ public class DynamicLamp extends StatefulObject implements Lamp {
         getState().setPart(STATUS, status);
     }
 
+    private VortexNode getNode(){
+        return getState().getPart(VORTEX_NODE);
+    }
+    private void setNode(VortexNode node){
+        getState().setPart(VORTEX_NODE, node);
+    }
+
+
     @Override
-    public void toggle() {
-        getStatus().toggle(this);
+    public void turnOff() {
+        setStatus(LampStatus.OFF);
+    }
+
+    @Override
+    public void turnOn() {
+        setStatus(LampStatus.ON);
     }
 
     @Override
@@ -37,11 +52,16 @@ public class DynamicLamp extends StatefulObject implements Lamp {
         getStatus().drawOn(applet, getPosition());
     }
 
-    public static DynamicLamp create(Point2d position) {
+    public static DynamicLamp create(VortexNode nodo, Point2d position) {
         DynamicLamp lamp = new DynamicLamp();
         lamp.setPosition(position);
-        LampStatus.ON.toggle(lamp);
+        lamp.turnOff();
+        lamp.setNode(nodo);
+        lamp.listenToEvents();
         return lamp;
+    }
+
+    private void listenToEvents() {
     }
 
     @Override
