@@ -6,4 +6,6 @@ package app.ar.com.dgarcia.processing.sandbox.vortex;
 public interface ConsumerManifest {
 
     VortexCondition getCondition();
+
+    VortexStream onAvailableProducers();
 }

@@ -8,9 +8,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.runner.RunWith;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by kfgodel on 18/01/15.
@@ -69,6 +67,9 @@ public class NodeTest extends JavaSpec<VortexTestContext> {
                     describe("of available consumers", () -> {
 
                         it("allows production of messages when consumers are available", ()->{
+                            ProducerManifest producerManifest = mock(ProducerManifest.class);
+                            context().node().declareProducer(producerManifest);
+
 
                         });
 
