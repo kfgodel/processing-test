@@ -4,7 +4,6 @@ import app.ar.com.dgarcia.processing.sandbox.vortex.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * Created by ikari on 20/01/2015.
@@ -24,12 +23,8 @@ public class ProducerImpl implements VortexProducer {
 
     @Override
     public void connectWith(List<VortexConsumer> consumers) {
-        if(consumers.isEmpty()){
-            // No consumers available yet
-            return;
-        }
-        withActiveStream((stream) -> {
-            consumers.forEach((consumer) -> connectWith(consumer));
+        withActiveStream(() -> {
+            consumers.forEach(this::addActiveConsumer);
         });
     }
 
@@ -40,21 +35,53 @@ public class ProducerImpl implements VortexProducer {
 
     @Override
     public void connectWith(VortexConsumer consumer) {
-        withActiveStream((stream)->{
-            activeConsumers.add(consumer);
-            VortexStream consumerStream = consumer.getStreamFor(this);
-            stream.addReceiver(consumerStream);
+        withActiveStream(()->{
+            addActiveConsumer(consumer);
         });
     }
 
-    private void withActiveStream(Consumer<BroadcastStream> code){
+    @Override
+    public void disconnectAll() {
+        List<VortexConsumer> disconnected = new ArrayList<>(activeConsumers);
+        withActiveStream(()->{
+            disconnected.forEach(this::removeActiveConsumer);
+        });
+    }
+
+    @Override
+    public void disconnectFrom(VortexConsumer consumer) {
+        withActiveStream(()->{
+            this.removeActiveConsumer(consumer);
+        });
+    }
+
+    private void removeActiveConsumer(VortexConsumer consumer) {
+        activeConsumers.remove(consumer);
+        VortexStream consumerStream = consumer.getActiveStream();
+        this.activeStream.removeReceiver(consumerStream);
+        consumer.removeActiveProducer(this);
+    }
+
+    private void addActiveConsumer(VortexConsumer consumer) {
+        consumer.addActiveProducer(this);
+        VortexStream consumerStream = consumer.getActiveStream();
+        this.activeStream.addReceiver(consumerStream);
+        activeConsumers.add(consumer);
+    }
+
+    private void withActiveStream(Runnable code){
         boolean streamIsNew = this.activeStream == null;
         if(streamIsNew){
             this.activeStream = BroadcastStreamImpl.create();
         }
-        code.accept(this.activeStream);
-        if(streamIsNew){
-            manifest.onConsumersAvailable(activeStream);
+        code.run();
+        if(this.activeStream.hasReceivers()){
+            if(streamIsNew){
+                manifest.onConsumersAvailable(activeStream);
+            }
+        }else{
+            this.activeStream = null;
+            manifest.onNoConsumersAvailable();
         }
     }
 }

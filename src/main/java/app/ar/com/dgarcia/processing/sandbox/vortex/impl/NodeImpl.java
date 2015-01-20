@@ -24,36 +24,38 @@ public class NodeImpl implements VortexNode {
     @Override
     public VortexProducer declareProducer(ProducerManifest producerManifest) {
         VortexProducer newProducer = ProducerImpl.create(producerManifest);
-        producers.add(newProducer);
 
         List<VortexConsumer> interestedConsumers = consumers.stream()
                 .filter((consumer) -> consumer.isInterestedIn(producerManifest))
                 .collect(Collectors.toList());
         newProducer.connectWith(interestedConsumers);
 
+        producers.add(newProducer);
         return newProducer;
     }
 
     @Override
-    public void retireProducer(VortexProducer addedProducer) {
-        producers.remove(addedProducer);
+    public void retireProducer(VortexProducer producer) {
+        producers.remove(producer);
+        producer.disconnectAll();
     }
 
     @Override
     public VortexConsumer declareConsumer(ConsumerManifest consumerManifest) {
         ConsumerImpl newConsumer = ConsumerImpl.create(consumerManifest);
-        consumers.add(newConsumer);
 
         List<VortexProducer> interestingProducers = producers.stream()
                 .filter((producer) -> newConsumer.isInterestedIn(producer.getManifest()))
                 .collect(Collectors.toList());
         newConsumer.connectWith(interestingProducers);
 
+        consumers.add(newConsumer);
         return newConsumer;
     }
 
     @Override
-    public void retireConsumer(VortexConsumer addedConsumer) {
-        consumers.remove(addedConsumer);
+    public void retireConsumer(VortexConsumer consumer) {
+        consumers.remove(consumer);
+        consumer.disconnectAll();
     }
 }

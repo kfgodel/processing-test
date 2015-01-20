@@ -2,7 +2,10 @@ package app.ar.com.dgarcia.processing.sandbox.interruptor;
 
 import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
 import app.ar.com.dgarcia.processing.sandbox.state.StatefulObject;
-import app.ar.com.dgarcia.processing.sandbox.vortex.*;
+import app.ar.com.dgarcia.processing.sandbox.vortex.ProducerManifest;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexCondition;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexNode;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexStream;
 import processing.core.PApplet;
 
 /**
@@ -55,9 +58,7 @@ public class DynamicInterruptor extends StatefulObject implements Interruptor {
             //No interested receivers
             return;
         }
-        VortexMessage stateChangeMessage = new VortexMessage() {
-        };
-        currentStream.receive(stateChangeMessage);
+        currentStream.receive(InterruptorEvent.create(newStatus));
     }
 
     public void turnOff() {

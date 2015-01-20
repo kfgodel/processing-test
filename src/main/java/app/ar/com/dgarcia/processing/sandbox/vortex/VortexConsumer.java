@@ -8,7 +8,13 @@ import java.util.List;
 public interface VortexConsumer {
     boolean isInterestedIn(ProducerManifest producerManifest);
 
-    VortexStream getStreamFor(VortexProducer newProducer);
+    void addActiveProducer(VortexProducer newProducer);
 
     void connectWith(List<VortexProducer> interestingProducers);
+
+    VortexStream getActiveStream();
+
+    void removeActiveProducer(VortexProducer producer);
+
+    void disconnectAll();
 }

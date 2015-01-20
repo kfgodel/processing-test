@@ -5,4 +5,8 @@ package app.ar.com.dgarcia.processing.sandbox.vortex;
  */
 public interface BroadcastStream extends VortexStream {
     void addReceiver(VortexStream consumerStream);
+
+    boolean hasReceivers();
+
+    void removeReceiver(VortexStream consumerStream);
 }

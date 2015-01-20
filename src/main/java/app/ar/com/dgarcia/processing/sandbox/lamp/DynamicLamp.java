@@ -1,8 +1,13 @@
 package app.ar.com.dgarcia.processing.sandbox.lamp;
 
 import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
+import app.ar.com.dgarcia.processing.sandbox.interruptor.InterruptorEvent;
+import app.ar.com.dgarcia.processing.sandbox.interruptor.InterruptorStatus;
 import app.ar.com.dgarcia.processing.sandbox.state.StatefulObject;
+import app.ar.com.dgarcia.processing.sandbox.vortex.ConsumerManifest;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexCondition;
 import app.ar.com.dgarcia.processing.sandbox.vortex.VortexNode;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexStream;
 import processing.core.PApplet;
 
 /**
@@ -62,6 +67,30 @@ public class DynamicLamp extends StatefulObject implements Lamp {
     }
 
     private void listenToEvents() {
+        getNode().declareConsumer(new ConsumerManifest() {
+            @Override
+            public VortexCondition getCondition() {
+                return new VortexCondition() {
+                };
+            }
+
+            @Override
+            public VortexStream onAvailableProducers() {
+                return (message)-> onMessageReceived((InterruptorEvent)message);
+            }
+
+            @Override
+            public void onNoAvailableProducers() {
+            }
+        });
+    }
+
+    private void onMessageReceived(InterruptorEvent event){
+        if(event.getStatus().equals(InterruptorStatus.ON)){
+            turnOn();
+        }else{
+            turnOff();
+        }
     }
 
     @Override

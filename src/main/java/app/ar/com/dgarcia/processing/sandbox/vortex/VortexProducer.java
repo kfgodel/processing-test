@@ -12,4 +12,8 @@ public interface VortexProducer {
     ProducerManifest getManifest();
 
     void connectWith(VortexConsumer consumer);
+
+    void disconnectAll();
+
+    void disconnectFrom(VortexConsumer consumer);
 }

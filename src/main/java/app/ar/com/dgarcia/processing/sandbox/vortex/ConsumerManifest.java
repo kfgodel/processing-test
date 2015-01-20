@@ -8,4 +8,6 @@ public interface ConsumerManifest {
     VortexCondition getCondition();
 
     VortexStream onAvailableProducers();
+
+    void onNoAvailableProducers();
 }
