@@ -2,8 +2,10 @@ package app.ar.com.dgarcia.processing.sandbox.interruptor;
 
 import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
 import app.ar.com.dgarcia.processing.sandbox.state.StatefulObject;
+import app.ar.com.dgarcia.processing.sandbox.vortex.ProducerManifest;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexCondition;
 import app.ar.com.dgarcia.processing.sandbox.vortex.VortexNode;
-import app.ar.com.dgarcia.processing.sandbox.vortex.VortexTunnel;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexStream;
 import processing.core.PApplet;
 
 /**
@@ -14,6 +16,7 @@ public class DynamicInterruptor extends StatefulObject implements Interruptor {
     public static final String STATUS = "STATUS";
     public static final String POSITION = "POSITION";
     public static final String VORTEX_NODE = "VORTEX_NODE";
+    public static final String VORTEX_STREAM = "VORTEX_STREAM";
 
     private Point2d getPosition(){
         return getState().getPart(POSITION);
@@ -36,6 +39,9 @@ public class DynamicInterruptor extends StatefulObject implements Interruptor {
         getState().setPart(VORTEX_NODE, node);
     }
 
+    private VortexStream getStream(){return getState().getPart(VORTEX_STREAM);}
+    private void setStream(VortexStream stream){getState().setPart(VORTEX_STREAM, stream);}
+
     @Override
     public void toggle() {
         getStatus().toggle(this);
@@ -47,9 +53,12 @@ public class DynamicInterruptor extends StatefulObject implements Interruptor {
 
     private void changeStatusTo(InterruptorStatus newStatus) {
         this.setStatus(newStatus);
-        VortexTunnel tunnel = this.getNode().createReceptionTunnel();
-        tunnel.receive(InterruptorEvent.create(newStatus));
-        this.getNode().returnReceptionTunnel(tunnel);
+        VortexStream currentStream = getStream();
+        if(currentStream == null){
+            //No interested receivers
+            return;
+        }
+        currentStream.receive(InterruptorEvent.create(newStatus));
     }
 
     public void turnOff() {
@@ -75,7 +84,28 @@ public class DynamicInterruptor extends StatefulObject implements Interruptor {
         interruptor.setPosition(position);
         interruptor.turnOff();
         interruptor.setNode(nodo);
+        interruptor.startCommunications();
         return interruptor;
+    }
+
+    private void startCommunications() {
+        getNode().declareProducer(new ProducerManifest() {
+            @Override
+            public VortexCondition getCondition() {
+                return new VortexCondition() {
+                };
+            }
+
+            @Override
+            public void onConsumersAvailable(VortexStream stream) {
+                setStream(stream);
+            }
+
+            @Override
+            public void onNoConsumersAvailable() {
+                setStream(null);
+            }
+        });
     }
 
     @Override

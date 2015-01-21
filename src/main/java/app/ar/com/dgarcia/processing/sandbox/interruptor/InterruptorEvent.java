@@ -1,9 +1,11 @@
 package app.ar.com.dgarcia.processing.sandbox.interruptor;
 
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexMessage;
+
 /**
  * Created by ikari on 17/01/2015.
  */
-public class InterruptorEvent {
+public class InterruptorEvent implements VortexMessage {
 
     private InterruptorStatus status;
 
