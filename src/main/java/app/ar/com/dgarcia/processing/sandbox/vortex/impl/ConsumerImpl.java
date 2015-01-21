@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * This type represents a message consumer that based on a manifest interacts with producers to get messages
  * Created by ikari on 20/01/2015.
  */
 public class ConsumerImpl implements VortexConsumer {
@@ -26,39 +27,58 @@ public class ConsumerImpl implements VortexConsumer {
         return true;
     }
 
+
     @Override
-    public void addActiveProducer(VortexProducer newProducer) {
-        activeProducers.add(newProducer);
+    public VortexStream getActiveStream() {
+        if(activeStream == null){
+            //sanity check
+            throw new IllegalStateException("This consumer has no active stream and one is needed");
+        }
+        return this.activeStream;
     }
 
     @Override
     public void connectWith(List<VortexProducer> interestingProducers) {
-        interestingProducers.forEach((producer)->{
+        interestingProducers.forEach((producer) -> {
             producer.connectWith(this);
         });
     }
-
-    public VortexStream getActiveStream() {
-        if (activeStream == null) {
-            activeStream = manifest.onAvailableProducers();
-        }
-        return activeStream;
-    }
-
-    @Override
-    public void removeActiveProducer(VortexProducer producer) {
-        activeProducers.remove(producer);
-        if(activeProducers.isEmpty()){
-            manifest.onNoAvailableProducers();
-            this.activeStream = null;
-        }
-    }
-
     @Override
     public void disconnectAll() {
+        // Assigned to temp list in order to be able to remove from original list
         List<VortexProducer> disconnected = new ArrayList<>(activeProducers);
         disconnected.forEach((producer) -> {
             producer.disconnectFrom(this);
         });
     }
+
+    @Override
+    public void addActiveProducer(VortexProducer newProducer) {
+        notifyingChangesToManifest(()->{
+            activeProducers.add(newProducer);
+        });
+    }
+    @Override
+    public void removeActiveProducer(VortexProducer producer) {
+        notifyingChangesToManifest(() -> {
+            activeProducers.remove(producer);
+        });
+    }
+
+    private void notifyingChangesToManifest(Runnable code){
+        boolean wasActive = hasActiveProducers();
+        code.run();
+        boolean isActive = hasActiveProducers();
+        if(isActive && !wasActive){
+            this.activeStream = manifest.onAvailableProducers();
+        }else if(!isActive && wasActive){
+            manifest.onNoAvailableProducers();
+            this.activeStream = null;
+        }
+    }
+
+    private boolean hasActiveProducers() {
+        return this.activeProducers.size() > 0;
+    }
+
 }

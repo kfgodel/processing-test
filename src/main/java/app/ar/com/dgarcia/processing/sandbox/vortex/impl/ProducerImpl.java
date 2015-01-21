@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * This type represents a message producer that feeds known consumers with messages that receives as a stream
  * Created by ikari on 20/01/2015.
  */
-public class ProducerImpl implements VortexProducer {
+public class ProducerImpl implements VortexProducer, VortexStream {
 
     private ProducerManifest manifest;
     private List<VortexConsumer> activeConsumers;
-    private BroadcastStream activeStream;
 
     public static ProducerImpl create(ProducerManifest manifest) {
         ProducerImpl producer = new ProducerImpl();
@@ -22,66 +22,69 @@ public class ProducerImpl implements VortexProducer {
     }
 
     @Override
-    public void connectWith(List<VortexConsumer> consumers) {
-        withActiveStream(() -> {
-            consumers.forEach(this::addActiveConsumer);
-        });
-    }
-
-    @Override
     public ProducerManifest getManifest() {
         return manifest;
     }
 
     @Override
+    public void connectWith(List<VortexConsumer> consumers) {
+        notifyingChangesToManifest(() -> {
+            consumers.forEach(this::addActiveConsumer);
+        });
+    }
+    @Override
     public void connectWith(VortexConsumer consumer) {
-        withActiveStream(()->{
+        notifyingChangesToManifest(() -> {
             addActiveConsumer(consumer);
         });
     }
 
     @Override
     public void disconnectAll() {
+        // Assigned to temp list in order to be able to remove from original list
         List<VortexConsumer> disconnected = new ArrayList<>(activeConsumers);
-        withActiveStream(()->{
+        notifyingChangesToManifest(() -> {
             disconnected.forEach(this::removeActiveConsumer);
         });
     }
 
     @Override
     public void disconnectFrom(VortexConsumer consumer) {
-        withActiveStream(()->{
+        notifyingChangesToManifest(() -> {
             this.removeActiveConsumer(consumer);
         });
     }
 
     private void removeActiveConsumer(VortexConsumer consumer) {
         activeConsumers.remove(consumer);
-        VortexStream consumerStream = consumer.getActiveStream();
-        this.activeStream.removeReceiver(consumerStream);
         consumer.removeActiveProducer(this);
     }
 
     private void addActiveConsumer(VortexConsumer consumer) {
         consumer.addActiveProducer(this);
-        VortexStream consumerStream = consumer.getActiveStream();
-        this.activeStream.addReceiver(consumerStream);
         activeConsumers.add(consumer);
     }
 
-    private void withActiveStream(Runnable code){
-        boolean streamIsNew = this.activeStream == null;
-        if(streamIsNew){
-            this.activeStream = BroadcastStreamImpl.create();
-        }
+    private void notifyingChangesToManifest(Runnable code){
+        boolean wasActive = hasActiveConsumers();
         code.run();
-        if(this.activeStream.hasReceivers()){
-            if(streamIsNew){
-                manifest.onConsumersAvailable(activeStream);
-            }
-        }else{
-            this.activeStream = null;
+        boolean isActive = hasActiveConsumers();
+        if(isActive && !wasActive){
+            manifest.onConsumersAvailable(this);
+        }else if(!isActive && wasActive){
             manifest.onNoConsumersAvailable();
+        }
+    }
+
+    private boolean hasActiveConsumers() {
+        return this.activeConsumers.size() > 0;
+    }
+
+    @Override
+    public void receive(VortexMessage message) {
+        for (VortexConsumer activeConsumer : activeConsumers) {
+            VortexStream consumerStream = activeConsumer.getActiveStream();
+            consumerStream.receive(message);
         }
     }
 }
