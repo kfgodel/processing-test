@@ -5,9 +5,11 @@ import app.ar.com.dgarcia.processing.sandbox.interruptor.InterruptorEvent;
 import app.ar.com.dgarcia.processing.sandbox.interruptor.InterruptorStatus;
 import app.ar.com.dgarcia.processing.sandbox.state.StatefulObject;
 import app.ar.com.dgarcia.processing.sandbox.vortex.ConsumerManifest;
-import app.ar.com.dgarcia.processing.sandbox.vortex.ProducerManifest;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexInterest;
 import app.ar.com.dgarcia.processing.sandbox.vortex.VortexNode;
-import app.ar.com.dgarcia.processing.sandbox.vortex.VortexStream;
+import app.ar.com.dgarcia.processing.sandbox.vortex.impl.AllInterest;
+import app.ar.com.dgarcia.processing.sandbox.vortex.impl.ConsumerManifestImpl;
+import app.ar.com.dgarcia.processing.sandbox.vortex.impl.NoInterest;
 import processing.core.PApplet;
 
 /**
@@ -19,6 +21,8 @@ public class DynamicLamp extends StatefulObject implements Lamp {
     public static final String VORTEX_NODE = "VORTEX_NODE";
     public static final String STATUS = "STATUS";
     public static final String POSITION = "POSITION";
+
+    private ConsumerManifest vortexManifest;
 
     private Point2d getPosition(){
         return getState().getPart(POSITION);
@@ -48,6 +52,12 @@ public class DynamicLamp extends StatefulObject implements Lamp {
     }
 
     @Override
+    public void toggleEvents() {
+        VortexInterest newInterest = (vortexManifest.getInterest() == AllInterest.INSTANCE)? NoInterest.INSTANCE: AllInterest.INSTANCE;
+        vortexManifest.changeInterest(newInterest);
+    }
+
+    @Override
     public void turnOn() {
         setStatus(LampStatus.ON);
     }
@@ -67,22 +77,9 @@ public class DynamicLamp extends StatefulObject implements Lamp {
     }
 
     private void listenToEvents() {
-        getNode().declareConsumer(new ConsumerManifest() {
-
-            @Override
-            public boolean isCompatibleWith(ProducerManifest producerManifest) {
-                return true;
-            }
-
-            @Override
-            public VortexStream onAvailableProducers() {
-                return (message)-> onMessageReceived((InterruptorEvent)message);
-            }
-
-            @Override
-            public void onNoAvailableProducers() {
-            }
-        });
+        vortexManifest = ConsumerManifestImpl.create(AllInterest.INSTANCE, () ->
+                (message) -> onMessageReceived((InterruptorEvent) message));
+        getNode().declareConsumer(vortexManifest);
     }
 
     private void onMessageReceived(InterruptorEvent event){

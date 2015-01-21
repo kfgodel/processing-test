@@ -14,4 +14,5 @@ public interface Lamp {
 
     void turnOff();
 
+    void toggleEvents();
 }

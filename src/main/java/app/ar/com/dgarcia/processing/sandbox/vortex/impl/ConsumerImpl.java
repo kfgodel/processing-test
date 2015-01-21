@@ -1,5 +1,7 @@
 package app.ar.com.dgarcia.processing.sandbox.vortex.impl;
 
+import app.ar.com.dgarcia.processing.sandbox.iterables.Collections;
+import app.ar.com.dgarcia.processing.sandbox.iterables.MergeResult;
 import app.ar.com.dgarcia.processing.sandbox.vortex.ConsumerManifest;
 import app.ar.com.dgarcia.processing.sandbox.vortex.VortexConsumer;
 import app.ar.com.dgarcia.processing.sandbox.vortex.VortexProducer;
@@ -38,6 +40,13 @@ public class ConsumerImpl implements VortexConsumer {
             throw new IllegalStateException("This consumer has no active stream and one is needed");
         }
         return this.activeStream;
+    }
+
+    @Override
+    public void updateConnectionsWith(List<VortexProducer> newInterestingProducers) {
+        MergeResult<VortexProducer> merged = Collections.merge(activeProducers, newInterestingProducers);
+        merged.getAdded().forEach((addedProducer)-> addedProducer.connectWith(this));
+        merged.getRemoved().forEach((removedProducer)-> removedProducer.disconnectFrom(this));
     }
 
     @Override

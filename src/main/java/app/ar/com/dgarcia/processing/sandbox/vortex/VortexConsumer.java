@@ -16,4 +16,6 @@ public interface VortexConsumer {
     void disconnectAll();
 
     VortexStream getActiveStream();
+
+    void updateConnectionsWith(List<VortexProducer> newInterestingProducers);
 }

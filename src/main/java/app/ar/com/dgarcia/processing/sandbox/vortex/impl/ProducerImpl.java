@@ -1,5 +1,7 @@
 package app.ar.com.dgarcia.processing.sandbox.vortex.impl;
 
+import app.ar.com.dgarcia.processing.sandbox.iterables.Collections;
+import app.ar.com.dgarcia.processing.sandbox.iterables.MergeResult;
 import app.ar.com.dgarcia.processing.sandbox.vortex.*;
 
 import java.util.ArrayList;
@@ -53,6 +55,16 @@ public class ProducerImpl implements VortexProducer, VortexStream {
         notifyingChangesToManifest(() -> {
             this.removeActiveConsumer(consumer);
         });
+    }
+
+    @Override
+    public void updateConnectionsWith(List<VortexConsumer> newInterestedConsumers) {
+        MergeResult<VortexConsumer> merged = Collections.merge(activeConsumers, newInterestedConsumers);
+        notifyingChangesToManifest(()->{
+            merged.getRemoved().forEach(this::removeActiveConsumer);
+            merged.getAdded().forEach(this::addActiveConsumer);
+        });
+
     }
 
     private void removeActiveConsumer(VortexConsumer consumer) {

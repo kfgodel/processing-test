@@ -25,12 +25,11 @@ public class NodeImpl implements VortexNode {
     public VortexProducer declareProducer(ProducerManifest producerManifest) {
         VortexProducer newProducer = ProducerImpl.create(producerManifest);
 
-        List<VortexConsumer> interestedConsumers = consumers.stream()
-                .filter((consumer) -> consumer.isInterestedIn(newProducer))
-                .collect(Collectors.toList());
+        List<VortexConsumer> interestedConsumers = calculateConsumersFor(newProducer);
         newProducer.connectWith(interestedConsumers);
 
         producers.add(newProducer);
+        producerManifest.setInterestChangeListener(() -> onProducerInterestChanged(newProducer));
         return newProducer;
     }
 
@@ -44,18 +43,41 @@ public class NodeImpl implements VortexNode {
     public VortexConsumer declareConsumer(ConsumerManifest consumerManifest) {
         ConsumerImpl newConsumer = ConsumerImpl.create(consumerManifest);
 
-        List<VortexProducer> interestingProducers = producers.stream()
-                .filter((producer) -> newConsumer.isInterestedIn(producer))
-                .collect(Collectors.toList());
+        List<VortexProducer> interestingProducers = calculateProducersFor(newConsumer);
         newConsumer.connectWith(interestingProducers);
 
         consumers.add(newConsumer);
+        consumerManifest.setInterestChangeListener(() -> onConsumerInterestChanged(newConsumer));
         return newConsumer;
     }
+
+    private List<VortexProducer> calculateProducersFor(VortexConsumer newConsumer) {
+        return producers.stream()
+                    .filter(newConsumer::isInterestedIn)
+                    .collect(Collectors.toList());
+    }
+    private List<VortexConsumer> calculateConsumersFor(VortexProducer newProducer) {
+        return consumers.stream()
+                .filter((consumer) -> consumer.isInterestedIn(newProducer))
+                .collect(Collectors.toList());
+    }
+
+
+    private void onConsumerInterestChanged(VortexConsumer changedConsumer) {
+        List<VortexProducer> newInterestingProducers = calculateProducersFor(changedConsumer);
+        changedConsumer.updateConnectionsWith(newInterestingProducers);
+    }
+
+    private void onProducerInterestChanged(VortexProducer changedProducer) {
+        List<VortexConsumer> newInterestedConsumers = calculateConsumersFor(changedProducer);
+        changedProducer.updateConnectionsWith(newInterestedConsumers);
+    }
+
 
     @Override
     public void retireConsumer(VortexConsumer consumer) {
         consumers.remove(consumer);
         consumer.disconnectAll();
     }
+
 }

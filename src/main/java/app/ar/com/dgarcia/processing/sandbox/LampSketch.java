@@ -47,9 +47,13 @@ public class LampSketch extends PApplet {
 
     @Override
     public void mouseClicked() {
-        Point2d mousePosition = Point2d.create(() -> mouseX, () -> mouseY);
-        if(dynamicInterruptor.collisions(mousePosition)){
-            dynamicInterruptor.toggle();
+        if(mouseButton == RIGHT){
+            dynamicLamp.toggleEvents();
+        }else{
+            Point2d mousePosition = Point2d.create(() -> mouseX, () -> mouseY);
+            if(dynamicInterruptor.collisions(mousePosition)){
+                dynamicInterruptor.toggle();
+            }
         }
     }
 }

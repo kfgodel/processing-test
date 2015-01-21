@@ -37,12 +37,12 @@ public class NodeTest extends JavaSpec<VortexTestContext> {
                 });
                 describe("manifest", ()->{
                     it("gets notified when matching consumers are available",()->{
-                        VortexCondition commonCondition = mock(VortexCondition.class);
+                        VortexInterest commonCondition = mock(VortexInterest.class);
 
                         ConsumerManifest consumerManifest = mock(ConsumerManifest.class);
                         when(consumerManifest.isCompatibleWith(any(ProducerManifest.class))).thenReturn(true);
                         ProducerManifest producerManifest = mock(ProducerManifest.class);
-                        when(producerManifest.getCondition()).thenReturn(commonCondition);
+                        when(producerManifest.getInterest()).thenReturn(commonCondition);
 
 
                         context().node().declareConsumer(consumerManifest);
