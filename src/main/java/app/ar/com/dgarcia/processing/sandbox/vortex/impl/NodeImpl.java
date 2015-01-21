@@ -26,7 +26,7 @@ public class NodeImpl implements VortexNode {
         VortexProducer newProducer = ProducerImpl.create(producerManifest);
 
         List<VortexConsumer> interestedConsumers = consumers.stream()
-                .filter((consumer) -> consumer.isInterestedIn(producerManifest))
+                .filter((consumer) -> consumer.isInterestedIn(newProducer))
                 .collect(Collectors.toList());
         newProducer.connectWith(interestedConsumers);
 
@@ -45,7 +45,7 @@ public class NodeImpl implements VortexNode {
         ConsumerImpl newConsumer = ConsumerImpl.create(consumerManifest);
 
         List<VortexProducer> interestingProducers = producers.stream()
-                .filter((producer) -> newConsumer.isInterestedIn(producer.getManifest()))
+                .filter((producer) -> newConsumer.isInterestedIn(producer))
                 .collect(Collectors.toList());
         newConsumer.connectWith(interestingProducers);
 

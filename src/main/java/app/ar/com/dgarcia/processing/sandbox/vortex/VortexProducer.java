@@ -7,13 +7,11 @@ import java.util.List;
  */
 public interface VortexProducer {
 
-    void connectWith(List<VortexConsumer> consumerStreams);
-
     ProducerManifest getManifest();
 
-    void connectWith(VortexConsumer consumer);
-
+    void connectWith(List<VortexConsumer> consumerStreams);
     void disconnectAll();
 
+    void connectWith(VortexConsumer consumer);
     void disconnectFrom(VortexConsumer consumer);
 }

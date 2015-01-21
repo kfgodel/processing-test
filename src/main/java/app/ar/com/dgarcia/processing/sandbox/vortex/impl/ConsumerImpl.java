@@ -1,6 +1,9 @@
 package app.ar.com.dgarcia.processing.sandbox.vortex.impl;
 
-import app.ar.com.dgarcia.processing.sandbox.vortex.*;
+import app.ar.com.dgarcia.processing.sandbox.vortex.ConsumerManifest;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexConsumer;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexProducer;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexStream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +26,8 @@ public class ConsumerImpl implements VortexConsumer {
     }
 
     @Override
-    public boolean isInterestedIn(ProducerManifest producerManifest) {
-        return true;
+    public boolean isInterestedIn(VortexProducer producer) {
+        return this.manifest.isCompatibleWith(producer.getManifest());
     }
 
 
