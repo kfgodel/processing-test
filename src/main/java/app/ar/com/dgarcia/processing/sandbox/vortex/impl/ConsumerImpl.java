@@ -1,6 +1,11 @@
 package app.ar.com.dgarcia.processing.sandbox.vortex.impl;
 
-import app.ar.com.dgarcia.processing.sandbox.vortex.*;
+import app.ar.com.dgarcia.processing.sandbox.iterables.Collections;
+import app.ar.com.dgarcia.processing.sandbox.iterables.MergeResult;
+import app.ar.com.dgarcia.processing.sandbox.vortex.ConsumerManifest;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexConsumer;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexProducer;
+import app.ar.com.dgarcia.processing.sandbox.vortex.VortexStream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +28,8 @@ public class ConsumerImpl implements VortexConsumer {
     }
 
     @Override
-    public boolean isInterestedIn(ProducerManifest producerManifest) {
-        return true;
+    public boolean isInterestedIn(VortexProducer producer) {
+        return this.manifest.isCompatibleWith(producer.getManifest());
     }
 
 
@@ -35,6 +40,13 @@ public class ConsumerImpl implements VortexConsumer {
             throw new IllegalStateException("This consumer has no active stream and one is needed");
         }
         return this.activeStream;
+    }
+
+    @Override
+    public void updateConnectionsWith(List<VortexProducer> newInterestingProducers) {
+        MergeResult<VortexProducer> merged = Collections.merge(activeProducers, newInterestingProducers);
+        merged.getAdded().forEach((addedProducer)-> addedProducer.connectWith(this));
+        merged.getRemoved().forEach((removedProducer)-> removedProducer.disconnectFrom(this));
     }
 
     @Override
