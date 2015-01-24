@@ -1,11 +1,18 @@
 package ar.com.dgarcia.vortex;
 
 import app.ar.com.dgarcia.processing.sandbox.vortex.*;
+import app.ar.com.dgarcia.processing.sandbox.vortex.impl.AllInterest;
+import app.ar.com.dgarcia.processing.sandbox.vortex.impl.ConsumerManifestImpl;
 import app.ar.com.dgarcia.processing.sandbox.vortex.impl.NodeImpl;
+import app.ar.com.dgarcia.processing.sandbox.vortex.impl.ProducerManifestImpl;
 import ar.com.dgarcia.javaspec.api.JavaSpec;
 import ar.com.dgarcia.javaspec.api.JavaSpecRunner;
+import ar.com.dgarcia.javaspec.api.Variable;
 import org.assertj.core.api.Assertions;
 import org.junit.runner.RunWith;
+
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
@@ -20,6 +27,27 @@ public class NodeTest extends JavaSpec<VortexTestContext> {
         describe("a vortex node", ()->{
 
             context().node(NodeImpl::create);
+            
+            it("allows message passing between consumer and producer",()->{
+                // The consumer declaration to hold the communication stream in a variable
+                Variable<VortexStream> producerStreamHolder = Variable.create();
+                Consumer<VortexStream> mockedProducerHandler = (stream)-> producerStreamHolder.set(stream);
+                ProducerManifestImpl producerManifest = ProducerManifestImpl.create(AllInterest.INSTANCE, mockedProducerHandler);
+                context().node().declareProducer(producerManifest);
+
+                // The consumer declaration to mock the reception of the message
+                VortexStream consumerStream = mock(VortexStream.class);
+                Supplier<VortexStream> consumerConnectionHandler = ()-> consumerStream;
+                ConsumerManifestImpl consumerManifest = ConsumerManifestImpl.create(AllInterest.INSTANCE, consumerConnectionHandler);
+                context().node().declareConsumer(consumerManifest);
+
+                // We send a message in one end and verify we received it in the other
+                VortexMessage sentMessage = mock(VortexMessage.class);
+                producerStreamHolder.get().receive(sentMessage);
+
+                // It should be the exact same message
+                verify(consumerStream).receive(sentMessage);
+            });
 
             describe("message producer", ()->{
                 it("can be added", ()->{
