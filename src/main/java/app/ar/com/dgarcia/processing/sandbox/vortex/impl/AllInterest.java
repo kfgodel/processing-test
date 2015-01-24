@@ -11,7 +11,8 @@ public class AllInterest implements VortexInterest {
     public static  AllInterest INSTANCE = new AllInterest();
 
     @Override
-    public boolean intersects(VortexInterest producerInterest) {
-        return true;
+    public boolean intersects(VortexInterest otherInterest) {
+        // Interseccion con vacio da vacio
+        return true && !otherInterest.equals(NoInterest.INSTANCE);
     }
 }
