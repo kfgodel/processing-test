@@ -91,7 +91,7 @@ public class DynamicInterruptor extends StatefulObject implements Interruptor {
 
     private void startCommunications() {
         EmitterManifestImpl producerManifest = EmitterManifestImpl.create(AllInterest.INSTANCE, this::setStream);
-        getNode().declareProducer(producerManifest);
+        getNode().declareEmitter(producerManifest);
     }
 
     @Override

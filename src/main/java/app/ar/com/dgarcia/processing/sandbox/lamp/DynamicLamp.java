@@ -79,7 +79,7 @@ public class DynamicLamp extends StatefulObject implements Lamp {
     private void listenToEvents() {
         vortexManifest = ReceiverManifestImpl.create(AllInterest.INSTANCE, () ->
                 (message) -> onMessageReceived((InterruptorEvent) message));
-        getNode().declareConsumer(vortexManifest);
+        getNode().declareReceiver(vortexManifest);
     }
 
     private void onMessageReceived(InterruptorEvent event){
