@@ -1,9 +1,6 @@
 package ar.com.dgarcia.vortex;
 
-import app.ar.com.dgarcia.processing.sandbox.vortex.VortexInterest;
-import app.ar.com.dgarcia.processing.sandbox.vortex.VortexMessage;
-import app.ar.com.dgarcia.processing.sandbox.vortex.VortexProducer;
-import app.ar.com.dgarcia.processing.sandbox.vortex.VortexStream;
+import app.ar.com.dgarcia.processing.sandbox.vortex.*;
 import app.ar.com.dgarcia.processing.sandbox.vortex.impl.*;
 import ar.com.dgarcia.javaspec.api.JavaSpec;
 import ar.com.dgarcia.javaspec.api.JavaSpecRunner;
@@ -54,14 +51,14 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
                                 declareProducer(AllInterest.INSTANCE);
 
                                 // Mocked handler to verify
-                                Supplier<VortexStream> producerAvailabilityHandler = mockAvailabilityHandler();
+                                Supplier<VortexStream> producerAvailabilityHandler = mockConsumerAvailabilityHandler();
                                 declareConsumer(AllInterest.INSTANCE, producerAvailabilityHandler);
 
                                 // Our handler gets called
                                 verify(producerAvailabilityHandler).get();
                             });
                             it("after consumer declaration", () -> {
-                                Supplier<VortexStream> producerAvailabilityHandler = mockAvailabilityHandler();
+                                Supplier<VortexStream> producerAvailabilityHandler = mockConsumerAvailabilityHandler();
                                 declareConsumer(AllInterest.INSTANCE, producerAvailabilityHandler);
 
                                 declareProducer(AllInterest.INSTANCE);
@@ -74,7 +71,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
                             VortexProducer producer = declareProducer(AllInterest.INSTANCE);
 
                             Runnable producerUnavailabilityHandler = mock(Runnable.class);
-                            declareConsumer(AllInterest.INSTANCE, mock(Supplier.class), producerUnavailabilityHandler);
+                            declareConsumer(AllInterest.INSTANCE, producerUnavailabilityHandler);
 
                             //Let's remove the producer to get notified
                             context().node().retireProducer(producer);
@@ -83,10 +80,10 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
                         });
                     });
                     describe("when interest change", () -> {
-                        it("makes un-matching producers into matching producers",()->{
+                        it("makes un-matching producers into matching",()->{
                             declareProducer(AllInterest.INSTANCE);
 
-                            Supplier<VortexStream> producerAvailabilityHandler = mockAvailabilityHandler();
+                            Supplier<VortexStream> producerAvailabilityHandler = mockConsumerAvailabilityHandler();
                             ConsumerManifestImpl consumerManifest = ConsumerManifestImpl.create(NoInterest.INSTANCE, producerAvailabilityHandler);
                             context().node().declareConsumer(consumerManifest);
 
@@ -94,7 +91,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
 
                             verify(producerAvailabilityHandler).get();
                         });
-                        it("makes matching producers into un-matching producers",()->{
+                        it("makes matching producers into un-matching",()->{
                             declareProducer(AllInterest.INSTANCE);
 
                             Runnable producerUnavailabilityHandler = mock(Runnable.class);
@@ -114,14 +111,14 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
                             it("before consumer declaration", () -> {
                                 declareProducer(AllInterest.INSTANCE);
 
-                                Supplier<VortexStream> producerAvailabilityHandler = mockAvailabilityHandler();
+                                Supplier<VortexStream> producerAvailabilityHandler = mockConsumerAvailabilityHandler();
                                 declareConsumer(NoInterest.INSTANCE, producerAvailabilityHandler);
 
                                 verify(producerAvailabilityHandler, never()).get();
                             });
 
                             it("after consumer declaration", () -> {
-                                Supplier<VortexStream> producerAvailabilityHandler = mockAvailabilityHandler();
+                                Supplier<VortexStream> producerAvailabilityHandler = mockConsumerAvailabilityHandler();
                                 declareConsumer(NoInterest.INSTANCE, producerAvailabilityHandler);
 
                                 declareProducer(AllInterest.INSTANCE);
@@ -132,7 +129,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
                         describe("are unavailable", () -> {
                             it("before consumer declaration", () -> {
                                 Runnable producerUnavailabilityHandler = mock(Runnable.class);
-                                declareConsumer(NoInterest.INSTANCE, mock(Supplier.class), producerUnavailabilityHandler);
+                                declareConsumer(NoInterest.INSTANCE, producerUnavailabilityHandler);
 
                                 verify(producerUnavailabilityHandler, never()).run();
                             });
@@ -142,7 +139,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
                                 VortexProducer producer = declareProducer(AllInterest.INSTANCE);
 
                                 Runnable producerUnavailabilityHandler = mock(Runnable.class);
-                                declareConsumer(NoInterest.INSTANCE, mock(Supplier.class), producerUnavailabilityHandler);
+                                declareConsumer(NoInterest.INSTANCE,  producerUnavailabilityHandler);
 
                                 context().node().retireProducer(producer);
 
@@ -153,7 +150,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
 
                     it("when matching producers are unavailable before consumer declaration", () -> {
                         Runnable producerUnavailabilityHandler = mock(Runnable.class);
-                        declareConsumer(NoInterest.INSTANCE, mock(Supplier.class), producerUnavailabilityHandler);
+                        declareConsumer(NoInterest.INSTANCE,  producerUnavailabilityHandler);
 
                         verify(producerUnavailabilityHandler, never()).run();
                     });
@@ -162,7 +159,7 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
                         it("doesn't make un-matching producers into matching producers",()->{
                             declareProducer(AllInterest.INSTANCE);
 
-                            Supplier<VortexStream> producerAvailabilityHandler = mockAvailabilityHandler();
+                            Supplier<VortexStream> producerAvailabilityHandler = mockConsumerAvailabilityHandler();
                             ConsumerManifestImpl consumerManifest = ConsumerManifestImpl.create(NoInterest.INSTANCE, producerAvailabilityHandler);
                             context().node().declareConsumer(consumerManifest);
 
@@ -185,7 +182,151 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
 
                 });
             });
+
+            describe("producers", () -> {
+                describe("are notified", () -> {
+                    describe("when matching consumers", () -> {
+                        describe("are available", () -> {
+                            it("before producer declaration", () -> {
+                                declareConsumer(AllInterest.INSTANCE);
+
+                                // Mocked handler to verify
+                                Consumer<VortexStream> consumerAvailabilityHandler = mock(Consumer.class);
+                                declareProducer(AllInterest.INSTANCE, consumerAvailabilityHandler);
+
+                                // Our handler gets called
+                                verify(consumerAvailabilityHandler).accept(any(VortexStream.class));
+                            });
+                            it("after consumer declaration", () -> {
+                                Consumer<VortexStream> consumerAvailabilityHandler = mock(Consumer.class);
+                                declareProducer(AllInterest.INSTANCE, consumerAvailabilityHandler);
+
+                                declareConsumer(AllInterest.INSTANCE);
+
+                                verify(consumerAvailabilityHandler).accept(any(VortexStream.class));
+                            });
+                        });
+                        it("become unavailable after producer declaration", () -> {
+                            VortexConsumer consumer = declareConsumer(AllInterest.INSTANCE);
+
+                            Runnable consumerUnavailabilityHandler = mock(Runnable.class);
+                            declareProducer(AllInterest.INSTANCE, consumerUnavailabilityHandler);
+
+                            context().node().retireConsumer(consumer);
+
+                            verify(consumerUnavailabilityHandler).run();
+                        });
+                    });
+                    describe("when interest change", () -> {
+                        it("makes un-matching consumers into matching",()->{
+                            declareConsumer(AllInterest.INSTANCE);
+
+                            Consumer<VortexStream> consumerAvailabilityHandler = mock(Consumer.class);
+                            ProducerManifestImpl producerManifest = ProducerManifestImpl.create(NoInterest.INSTANCE, consumerAvailabilityHandler);
+                            context().node().declareProducer(producerManifest);
+
+                            producerManifest.changeInterest(AllInterest.INSTANCE);
+
+                            verify(consumerAvailabilityHandler).accept(any(VortexStream.class));
+                        });
+                        it("makes matching consumers into un-matching",()->{
+                            declareConsumer(AllInterest.INSTANCE);
+
+
+                            Runnable consumerUnavailabilityHandler = mock(Runnable.class);
+                            ProducerManifestImpl producerManifest = ProducerManifestImpl.create(NoInterest.INSTANCE, mock(Consumer.class), consumerUnavailabilityHandler);
+                            context().node().declareProducer(producerManifest);
+
+                            producerManifest.changeInterest(NoInterest.INSTANCE);
+
+                            verify(consumerUnavailabilityHandler).run();
+                        });
+                    });
+                });
+
+                describe("are not notified", () -> {
+                    describe("when un-matching consumers", () -> {
+                        describe("are available", () -> {
+                            it("before producer declaration", () -> {
+                                declareConsumer(AllInterest.INSTANCE);
+
+                                Consumer<VortexStream> consumerAvailabilityHandler = mock(Consumer.class);
+                                declareProducer(NoInterest.INSTANCE, consumerAvailabilityHandler);
+
+                                verify(consumerAvailabilityHandler, never()).accept(any(VortexStream.class));
+                            });
+
+                            it("after producer declaration", () -> {
+                                Consumer<VortexStream> consumerAvailabilityHandler = mock(Consumer.class);
+                                declareProducer(NoInterest.INSTANCE, consumerAvailabilityHandler);
+
+                                declareConsumer(AllInterest.INSTANCE);
+
+                                verify(consumerAvailabilityHandler, never()).accept(any(VortexStream.class));
+                            });
+                        });
+                        describe("are unavailable", () -> {
+                            it("before producer declaration", () -> {
+                                Runnable consumerUnavailabilityHandler = mock(Runnable.class);
+                                declareConsumer(NoInterest.INSTANCE, consumerUnavailabilityHandler);
+
+                                verify(consumerUnavailabilityHandler, never()).run();
+                            });
+
+                            it("after producer declaration", () -> {
+                                // The producer we will remove
+                                VortexConsumer consumer = declareConsumer(AllInterest.INSTANCE);
+
+                                Runnable consumerUnavailabilityHandler = mock(Runnable.class);
+                                declareProducer(NoInterest.INSTANCE, consumerUnavailabilityHandler);
+
+                                context().node().retireConsumer(consumer);
+
+                                verify(consumerUnavailabilityHandler, never()).run();
+                            });
+                        });
+                    });
+
+                    it("when matching consumers are unavailable before producer declaration", () -> {
+                        Runnable consumerUnavailabilityHandler = mock(Runnable.class);
+                        declareProducer(NoInterest.INSTANCE, consumerUnavailabilityHandler);
+
+                        verify(consumerUnavailabilityHandler, never()).run();
+                    });
+
+                    describe("when interest change", () -> {
+                        it("doesn't make un-matching consumers into matching",()->{
+                            declareConsumer(AllInterest.INSTANCE);
+
+                            Consumer<VortexStream> consumerAvailabilityHandler = mock(Consumer.class);
+                            ProducerManifestImpl producerManifest = ProducerManifestImpl.create(NoInterest.INSTANCE, consumerAvailabilityHandler);
+                            context().node().declareProducer(producerManifest);
+
+                            producerManifest.changeInterest(NoInterest.INSTANCE);
+
+                            verify(consumerAvailabilityHandler, never()).accept(any(VortexStream.class));
+                        });
+                        it("doesn't make matching consumers into un-matching",()->{
+                            declareConsumer(AllInterest.INSTANCE);
+
+                            Runnable consumerUnavailabilityHandler = mock(Runnable.class);
+                            ProducerManifestImpl producerManifest = ProducerManifestImpl.create(NoInterest.INSTANCE, mock(Consumer.class), consumerUnavailabilityHandler);
+                            context().node().declareProducer(producerManifest);
+
+                            producerManifest.changeInterest(AllInterest.INSTANCE);
+
+                            verify(consumerUnavailabilityHandler, never()).run();
+                        });
+                    });
+
+                });
+            });
         });
+    }
+
+    private VortexConsumer declareConsumer(VortexInterest interest) {
+        ConsumerManifestImpl consumerManifest = ConsumerManifestImpl.create(interest, mockConsumerAvailabilityHandler());
+        return context().node().declareConsumer(consumerManifest);
     }
 
     private void declareConsumer(VortexInterest interest, Supplier<VortexStream> producerAvailabilityHandler) {
@@ -193,13 +334,13 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
         context().node().declareConsumer(consumerManifest);
     }
 
-    private void declareConsumer(VortexInterest interest, Supplier producerAvailabilityHandler, Runnable producerUnavailabilityHandler) {
-        ConsumerManifestImpl consumerManifest = ConsumerManifestImpl.create(interest, producerAvailabilityHandler, producerUnavailabilityHandler);
+    private void declareConsumer(VortexInterest interest, Runnable producerUnavailabilityHandler) {
+        ConsumerManifestImpl consumerManifest = ConsumerManifestImpl.create(interest, mock(Supplier.class), producerUnavailabilityHandler);
         context().node().declareConsumer(consumerManifest);
     }
 
 
-    private Supplier<VortexStream> mockAvailabilityHandler() {
+    private Supplier<VortexStream> mockConsumerAvailabilityHandler() {
         Supplier<VortexStream> producerAvailabilityHandler = mock(Supplier.class);
         when(producerAvailabilityHandler.get()).thenReturn(mock(VortexStream.class));
         return producerAvailabilityHandler;
@@ -209,4 +350,15 @@ public class VortexEndpointTest extends JavaSpec<VortexTestContext> {
         ProducerManifestImpl producerManifest = ProducerManifestImpl.create(producerInterest, mock(Consumer.class));
         return context().node().declareProducer(producerManifest);
     }
+
+    private VortexProducer declareProducer(VortexInterest producerInterest, Consumer<VortexStream> consumerAvailabilityHandler) {
+        ProducerManifestImpl producerManifest = ProducerManifestImpl.create(producerInterest, consumerAvailabilityHandler);
+        return context().node().declareProducer(producerManifest);
+    }
+
+    private VortexProducer declareProducer(VortexInterest producerInterest, Runnable consumerUnavailabilityHandler ) {
+        ProducerManifestImpl producerManifest = ProducerManifestImpl.create(producerInterest, mock(Consumer.class), consumerUnavailabilityHandler);
+        return context().node().declareProducer(producerManifest);
+    }
+
 }
