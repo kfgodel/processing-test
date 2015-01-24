@@ -4,12 +4,12 @@ import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
 import app.ar.com.dgarcia.processing.sandbox.interruptor.InterruptorEvent;
 import app.ar.com.dgarcia.processing.sandbox.interruptor.InterruptorStatus;
 import app.ar.com.dgarcia.processing.sandbox.state.StatefulObject;
-import app.ar.com.dgarcia.processing.sandbox.vortex.ConsumerManifest;
-import app.ar.com.dgarcia.processing.sandbox.vortex.VortexInterest;
-import app.ar.com.dgarcia.processing.sandbox.vortex.VortexNode;
-import app.ar.com.dgarcia.processing.sandbox.vortex.impl.AllInterest;
-import app.ar.com.dgarcia.processing.sandbox.vortex.impl.ConsumerManifestImpl;
-import app.ar.com.dgarcia.processing.sandbox.vortex.impl.NoInterest;
+import ar.com.kfgodel.vortex.api.VortexEndpoint;
+import ar.com.kfgodel.vortex.api.manifest.ReceiverManifest;
+import ar.com.kfgodel.vortex.api.manifest.VortexInterest;
+import ar.com.kfgodel.vortex.impl.manifest.AllInterest;
+import ar.com.kfgodel.vortex.impl.manifest.NoInterest;
+import ar.com.kfgodel.vortex.impl.manifest.ReceiverManifestImpl;
 import processing.core.PApplet;
 
 /**
@@ -22,7 +22,7 @@ public class DynamicLamp extends StatefulObject implements Lamp {
     public static final String STATUS = "STATUS";
     public static final String POSITION = "POSITION";
 
-    private ConsumerManifest vortexManifest;
+    private ReceiverManifest vortexManifest;
 
     private Point2d getPosition(){
         return getState().getPart(POSITION);
@@ -38,10 +38,10 @@ public class DynamicLamp extends StatefulObject implements Lamp {
         getState().setPart(STATUS, status);
     }
 
-    private VortexNode getNode(){
+    private VortexEndpoint getNode(){
         return getState().getPart(VORTEX_NODE);
     }
-    private void setNode(VortexNode node){
+    private void setNode(VortexEndpoint node){
         getState().setPart(VORTEX_NODE, node);
     }
 
@@ -67,7 +67,7 @@ public class DynamicLamp extends StatefulObject implements Lamp {
         getStatus().drawOn(applet, getPosition());
     }
 
-    public static DynamicLamp create(VortexNode nodo, Point2d position) {
+    public static DynamicLamp create(VortexEndpoint nodo, Point2d position) {
         DynamicLamp lamp = new DynamicLamp();
         lamp.setPosition(position);
         lamp.turnOff();
@@ -77,7 +77,7 @@ public class DynamicLamp extends StatefulObject implements Lamp {
     }
 
     private void listenToEvents() {
-        vortexManifest = ConsumerManifestImpl.create(AllInterest.INSTANCE, () ->
+        vortexManifest = ReceiverManifestImpl.create(AllInterest.INSTANCE, () ->
                 (message) -> onMessageReceived((InterruptorEvent) message));
         getNode().declareConsumer(vortexManifest);
     }

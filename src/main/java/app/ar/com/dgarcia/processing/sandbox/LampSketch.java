@@ -5,8 +5,8 @@ import app.ar.com.dgarcia.processing.sandbox.interruptor.DynamicInterruptor;
 import app.ar.com.dgarcia.processing.sandbox.interruptor.Interruptor;
 import app.ar.com.dgarcia.processing.sandbox.lamp.DynamicLamp;
 import app.ar.com.dgarcia.processing.sandbox.lamp.Lamp;
-import app.ar.com.dgarcia.processing.sandbox.vortex.VortexNode;
-import app.ar.com.dgarcia.processing.sandbox.vortex.impl.NodeImpl;
+import ar.com.kfgodel.vortex.api.VortexEndpoint;
+import ar.com.kfgodel.vortex.impl.EndpointImpl;
 import processing.core.PApplet;
 
 /**
@@ -21,13 +21,13 @@ public class LampSketch extends PApplet {
 
     private Lamp dynamicLamp;
     private Interruptor dynamicInterruptor;
-    private VortexNode nodo;
+    private VortexEndpoint nodo;
 
     @Override
     public void setup() {
         size(1024,768);
 
-        nodo = NodeImpl.create();
+        nodo = EndpointImpl.create();
         dynamicInterruptor = DynamicInterruptor.create(nodo, Point2d.centerOf(this).toTheBottom(50));
         dynamicLamp = DynamicLamp.create(nodo, Point2d.centerOf(this).toTheTop(50));
     }
