@@ -6,7 +6,8 @@ import app.ar.com.dgarcia.processing.sandbox.interruptor.Interruptor;
 import app.ar.com.dgarcia.processing.sandbox.lamp.DynamicLamp;
 import app.ar.com.dgarcia.processing.sandbox.lamp.Lamp;
 import ar.com.kfgodel.vortex.api.VortexEndpoint;
-import ar.com.kfgodel.vortex.impl.EndpointImpl;
+import ar.com.kfgodel.vortex.impl.connection.ConnectionHandlerImpl;
+import ar.com.kfgodel.vortex.impl.connection.InMemoryNet;
 import processing.core.PApplet;
 
 /**
@@ -21,15 +22,15 @@ public class LampSketch extends PApplet {
 
     private Lamp dynamicLamp;
     private Interruptor dynamicInterruptor;
-    private VortexEndpoint nodo;
+    private VortexEndpoint vortexEndpoint;
 
     @Override
     public void setup() {
         size(1024,768);
 
-        nodo = EndpointImpl.create();
-        dynamicInterruptor = DynamicInterruptor.create(nodo, Point2d.centerOf(this).toTheBottom(50));
-        dynamicLamp = DynamicLamp.create(nodo, Point2d.centerOf(this).toTheTop(50));
+        InMemoryNet.create().connect(ConnectionHandlerImpl.create((connectedEndpoint) -> vortexEndpoint = connectedEndpoint));
+        dynamicInterruptor = DynamicInterruptor.create(vortexEndpoint, Point2d.centerOf(this).toTheBottom(50));
+        dynamicLamp = DynamicLamp.create(vortexEndpoint, Point2d.centerOf(this).toTheTop(50));
     }
 
     private void drawFrame() {
