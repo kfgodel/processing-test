@@ -61,7 +61,7 @@ public class DynamicInterruptor extends StatefulObject implements Interruptor {
             //No interested receivers
             return;
         }
-        Map<String, Object> message = TransformerMapper.create().toMap(InterruptorEvent.create(newStatus));
+        Map<String, Object> message = TransformerMapper.create().toMap(InterruptorEvent.create(newStatus, getPosition()));
         currentStream.accept(message);
     }
 

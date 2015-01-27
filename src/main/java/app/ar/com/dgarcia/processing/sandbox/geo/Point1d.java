@@ -58,5 +58,9 @@ public interface Point1d extends IntSupplier {
         return ()-> Math.abs(getAsInt());
     };
 
+    default int toPow(int exponent){
+        return (int) Math.pow(this.getAsInt(), exponent);
+    };
+
 
 }

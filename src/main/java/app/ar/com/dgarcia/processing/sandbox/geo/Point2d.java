@@ -52,4 +52,12 @@ public interface Point2d {
     default Point2d absolutize(){
         return Point2d.create(getX().absolutize(), getY().absolutize());
     };
+
+    default float distanceTo(Point2d otherPosition){
+        return otherPosition.relativeTo(this).norm();
+    }
+
+    default float norm(){
+        return (float) Math.sqrt(getX().toPow(2) + getY().toPow(2));
+    };
 }

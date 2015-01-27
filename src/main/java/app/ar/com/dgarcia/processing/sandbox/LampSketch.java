@@ -5,7 +5,6 @@ import app.ar.com.dgarcia.processing.sandbox.draws.Drawable;
 import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
 import app.ar.com.dgarcia.processing.sandbox.interruptor.DynamicInterruptor;
 import app.ar.com.dgarcia.processing.sandbox.lamp.DynamicLamp;
-import app.ar.com.dgarcia.processing.sandbox.lamp.Lamp;
 import ar.com.kfgodel.vortex.api.VortexEndpoint;
 import ar.com.kfgodel.vortex.impl.connection.ConnectionHandlerImpl;
 import ar.com.kfgodel.vortex.impl.connection.InMemoryNet;
@@ -24,7 +23,6 @@ public class LampSketch extends PApplet {
         PApplet.main(new String[] { LampSketch.class.getName() });
     }
 
-    private Lamp dynamicLamp;
     private VortexEndpoint vortexEndpoint;
     private List<MouseClickable> clickables = new ArrayList<>();
     private List<Drawable> drawables = new ArrayList<>();
@@ -34,10 +32,23 @@ public class LampSketch extends PApplet {
         size(1024,768);
 
         InMemoryNet.create().connect(ConnectionHandlerImpl.create((connectedEndpoint) -> vortexEndpoint = connectedEndpoint));
-        dynamicLamp = DynamicLamp.create(vortexEndpoint, Point2d.centerOf(this).toTheTop(50));
-        addElement(dynamicLamp);
+        addElement(DynamicLamp.create(vortexEndpoint, Point2d.centerOf(this).toTheTop(50).toTheLeft(50)));
+        addElement(DynamicLamp.create(vortexEndpoint, Point2d.centerOf(this).toTheTop(50).toTheRight(50)));
         addElement(DynamicInterruptor.create(vortexEndpoint, Point2d.centerOf(this).toTheBottom(50).toTheLeft(40)));
         addElement(DynamicInterruptor.create(vortexEndpoint, Point2d.centerOf(this).toTheBottom(50).toTheRight(40)));
+
+        for (int i = 0; i < 10; i++) {
+            int xPosition = (int) random(40, 960);
+            int yPosition = (int) random(40, 700);
+            addElement(DynamicLamp.create(vortexEndpoint, Point2d.create(()->xPosition,()->yPosition)));
+        }
+
+        for (int i = 0; i < 10; i++) {
+            int xPosition = (int) random(40, 960);
+            int yPosition = (int) random(40, 700);
+            addElement(DynamicInterruptor.create(vortexEndpoint, Point2d.create(()->xPosition,()->yPosition)));
+        }
+
     }
 
     private void addElement(Object any){
@@ -65,14 +76,10 @@ public class LampSketch extends PApplet {
 
     @Override
     public void mouseClicked() {
-        if(mouseButton == RIGHT){
-            dynamicLamp.toggleEvents();
-        }else{
-            Point2d mousePosition = Point2d.create(() -> mouseX, () -> mouseY);
-            for (MouseClickable clickable : clickables) {
-                if(clickable.collisions(mousePosition)){
-                    clickable.handleMouseClick();
-                }
+        Point2d mousePosition = Point2d.create(() -> mouseX, () -> mouseY);
+        for (MouseClickable clickable : clickables) {
+            if(clickable.collisions(mousePosition)){
+                clickable.handleMouseClick();
             }
         }
     }

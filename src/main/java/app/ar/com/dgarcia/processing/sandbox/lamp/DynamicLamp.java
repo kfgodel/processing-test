@@ -25,6 +25,8 @@ public class DynamicLamp extends StatefulObject implements Lamp {
 
     private ReceiverManifest vortexManifest;
 
+    private Point2d closestInterruptor;
+
     private Point2d getPosition(){
         return getState().getPart(POSITION);
     }
@@ -85,7 +87,19 @@ public class DynamicLamp extends StatefulObject implements Lamp {
 
     private void onMessageReceived(Map<String, Object> message){
         LampEvent event = TransformerMapper.create().fromMap(message, LampEvent.class);
-        event.getStatus().turn(this);
+        if(isTheClosestInterruptor(event.getPosition())){
+            event.getStatus().turn(this);
+        }else{
+            // We ignore other interruptors
+        }
+    }
+
+    private boolean isTheClosestInterruptor(Point2d newInterruptor) {
+        if(closestInterruptor == null || this.getPosition().distanceTo(newInterruptor) <= this.getPosition().distanceTo(closestInterruptor)){
+            closestInterruptor = newInterruptor;
+            return true;
+        }
+        return false;
     }
 
     @Override
