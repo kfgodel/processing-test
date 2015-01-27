@@ -1,8 +1,6 @@
 package app.ar.com.dgarcia.processing.sandbox.lamp;
 
 import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
-import app.ar.com.dgarcia.processing.sandbox.interruptor.InterruptorEvent;
-import app.ar.com.dgarcia.processing.sandbox.interruptor.InterruptorStatus;
 import app.ar.com.dgarcia.processing.sandbox.state.StatefulObject;
 import ar.com.dgarcia.objectmapper.impl.TransformerMapper;
 import ar.com.kfgodel.vortex.api.VortexEndpoint;
@@ -86,12 +84,8 @@ public class DynamicLamp extends StatefulObject implements Lamp {
     }
 
     private void onMessageReceived(Map<String, Object> message){
-        InterruptorEvent event = TransformerMapper.create().fromMap(message, InterruptorEvent.class);
-        if(event.getStatus().equals(InterruptorStatus.ON)){
-            turnOn();
-        }else{
-            turnOff();
-        }
+        LampEvent event = TransformerMapper.create().fromMap(message, LampEvent.class);
+        event.getStatus().turn(this);
     }
 
     @Override

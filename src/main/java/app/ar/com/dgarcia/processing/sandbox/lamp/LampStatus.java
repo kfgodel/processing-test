@@ -22,6 +22,10 @@ public enum LampStatus {
             LampRepresentation.drawActiveOn(applet, position);
         }
 
+        @Override
+        public void turn(DynamicLamp dynamicLamp) {
+            dynamicLamp.turnOn();
+        }
     },
     /**
      * Obscure
@@ -37,9 +41,15 @@ public enum LampStatus {
             LampRepresentation.drawInactiveOn(applet,position);
         }
 
+        @Override
+        public void turn(DynamicLamp dynamicLamp) {
+            dynamicLamp.turnOff();
+        }
     };
 
     public abstract void toggle(DynamicLamp lamp);
 
     public abstract void drawOn(PApplet applet, Point2d position);
+
+    public abstract void turn(DynamicLamp dynamicLamp);
 }
