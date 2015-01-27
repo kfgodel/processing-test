@@ -4,6 +4,7 @@ import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
 import app.ar.com.dgarcia.processing.sandbox.interruptor.InterruptorEvent;
 import app.ar.com.dgarcia.processing.sandbox.interruptor.InterruptorStatus;
 import app.ar.com.dgarcia.processing.sandbox.state.StatefulObject;
+import ar.com.dgarcia.objectmapper.impl.TransformerMapper;
 import ar.com.kfgodel.vortex.api.VortexEndpoint;
 import ar.com.kfgodel.vortex.api.manifest.ReceiverManifest;
 import ar.com.kfgodel.vortex.api.manifest.VortexInterest;
@@ -11,6 +12,8 @@ import ar.com.kfgodel.vortex.impl.manifest.AllInterest;
 import ar.com.kfgodel.vortex.impl.manifest.NoInterest;
 import ar.com.kfgodel.vortex.impl.manifest.ReceiverManifestImpl;
 import processing.core.PApplet;
+
+import java.util.Map;
 
 /**
  * This type represents a lamp that can change its on/off state and the according representation
@@ -78,11 +81,12 @@ public class DynamicLamp extends StatefulObject implements Lamp {
 
     private void listenToEvents() {
         vortexManifest = ReceiverManifestImpl.create(AllInterest.INSTANCE, () ->
-                (message) -> onMessageReceived((InterruptorEvent) message));
+                (message) -> onMessageReceived((Map<String, Object>) message));
         getNode().declareReceiver(vortexManifest);
     }
 
-    private void onMessageReceived(InterruptorEvent event){
+    private void onMessageReceived(Map<String, Object> message){
+        InterruptorEvent event = TransformerMapper.create().fromMap(message, InterruptorEvent.class);
         if(event.getStatus().equals(InterruptorStatus.ON)){
             turnOn();
         }else{
