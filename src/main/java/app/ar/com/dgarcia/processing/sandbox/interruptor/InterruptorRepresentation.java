@@ -35,6 +35,7 @@ public class InterruptorRepresentation {
 
     public static void drawInterruptorBase(PApplet applet, Point2d position) {
         applet.stroke(0);
+        applet.strokeWeight(1);
         applet.fill(176, 213, 224);
         drawBox(applet, position, interruptorWidth(), interruptorHeight());
 

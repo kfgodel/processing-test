@@ -82,6 +82,11 @@ public class DynamicInterruptor extends StatefulObject implements Interruptor {
         return insideHeight && insideWidth;
     }
 
+    @Override
+    public void handleMouseClick() {
+        toggle();
+    }
+
 
     public static DynamicInterruptor create(VortexEndpoint nodo, Point2d position) {
         DynamicInterruptor interruptor = new DynamicInterruptor();
