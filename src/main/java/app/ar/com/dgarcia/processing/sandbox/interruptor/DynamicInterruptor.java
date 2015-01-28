@@ -2,9 +2,12 @@ package app.ar.com.dgarcia.processing.sandbox.interruptor;
 
 import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
 import app.ar.com.dgarcia.processing.sandbox.state.StatefulObject;
+import app.ar.com.dgarcia.processing.sandbox.vortex.MapBasedInterest;
+import app.ar.com.dgarcia.processing.sandbox.vortex.RequiredProperty;
+import app.ar.com.dgarcia.processing.sandbox.vortex.RestrictedValueSetProperty;
+import ar.com.dgarcia.colecciones.sets.Sets;
 import ar.com.dgarcia.objectmapper.impl.TransformerMapper;
 import ar.com.kfgodel.vortex.api.VortexEndpoint;
-import ar.com.kfgodel.vortex.impl.manifest.AllInterest;
 import ar.com.kfgodel.vortex.impl.manifest.EmitterManifestImpl;
 import processing.core.PApplet;
 
@@ -98,7 +101,12 @@ public class DynamicInterruptor extends StatefulObject implements Interruptor {
     }
 
     private void startCommunications() {
-        EmitterManifestImpl producerManifest = EmitterManifestImpl.create(AllInterest.INSTANCE, this::setStream);
+        MapBasedInterest interruptorEventInterest = MapBasedInterest.create();
+        interruptorEventInterest.addRestriction(RequiredProperty.create(InterruptorEvent.positionX_FIELD));
+        interruptorEventInterest.addRestriction(RequiredProperty.create(InterruptorEvent.positionY_FIELD));
+        interruptorEventInterest.addRestriction(RestrictedValueSetProperty.create(InterruptorEvent.status_FIELD, Sets.newLinkedHashSet(InterruptorStatus.ON.name(), InterruptorStatus.OFF.name())));
+
+        EmitterManifestImpl producerManifest = EmitterManifestImpl.create(interruptorEventInterest, this::setStream);
         getNode().declareEmitter(producerManifest);
     }
 

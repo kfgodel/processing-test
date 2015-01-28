@@ -9,8 +9,14 @@ import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
 public class LampEvent {
 
     private LampStatus status;
+    public static final String status_FIELD = "status";
+    
     private int positionX;
+    public static final String positionX_FIELD = "positionX";
+
     private int positionY;
+    public static final String positionY_FIELD = "positionY";
+
 
     public LampStatus getStatus() {
         return status;

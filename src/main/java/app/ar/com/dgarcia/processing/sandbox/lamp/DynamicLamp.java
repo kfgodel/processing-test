@@ -2,6 +2,10 @@ package app.ar.com.dgarcia.processing.sandbox.lamp;
 
 import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
 import app.ar.com.dgarcia.processing.sandbox.state.StatefulObject;
+import app.ar.com.dgarcia.processing.sandbox.vortex.MapBasedInterest;
+import app.ar.com.dgarcia.processing.sandbox.vortex.RequiredProperty;
+import app.ar.com.dgarcia.processing.sandbox.vortex.RestrictedValueSetProperty;
+import ar.com.dgarcia.colecciones.sets.Sets;
 import ar.com.dgarcia.objectmapper.impl.TransformerMapper;
 import ar.com.kfgodel.vortex.api.VortexEndpoint;
 import ar.com.kfgodel.vortex.api.manifest.ReceiverManifest;
@@ -80,12 +84,17 @@ public class DynamicLamp extends StatefulObject implements Lamp {
     }
 
     private void listenToEvents() {
-        vortexManifest = ReceiverManifestImpl.create(AllInterest.INSTANCE, () ->
-                (message) -> onMessageReceived((Map<String, Object>) message));
+        MapBasedInterest lampEventInterest = MapBasedInterest.create();
+        lampEventInterest.addRestriction(RequiredProperty.create(LampEvent.positionX_FIELD));
+        lampEventInterest.addRestriction(RequiredProperty.create(LampEvent.positionY_FIELD));
+        lampEventInterest.addRestriction(RestrictedValueSetProperty.create(LampEvent.status_FIELD, Sets.newLinkedHashSet(LampStatus.ON.name(), LampStatus.OFF.name())));
+
+        vortexManifest = ReceiverManifestImpl.create(lampEventInterest, () ->
+                (message) -> onLampEventReceived((Map<String, Object>) message));
         getNode().declareReceiver(vortexManifest);
     }
 
-    private void onMessageReceived(Map<String, Object> message){
+    private void onLampEventReceived(Map<String, Object> message){
         LampEvent event = TransformerMapper.create().fromMap(message, LampEvent.class);
         if(isTheClosestInterruptor(event.getPosition())){
             event.getStatus().turn(this);

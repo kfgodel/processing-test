@@ -8,8 +8,14 @@ import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
 public class InterruptorEvent {
 
     private InterruptorStatus status;
+    public static final String status_FIELD = "status";
+
     private int positionX;
+    public static final String positionX_FIELD = "positionX";
+
     private int positionY;
+    public static final String positionY_FIELD = "positionY";
+
 
     public InterruptorStatus getStatus() {
         return status;
