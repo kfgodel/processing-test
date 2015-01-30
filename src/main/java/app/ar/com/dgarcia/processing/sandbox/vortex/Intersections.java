@@ -12,8 +12,8 @@ public class Intersections {
         if(oneRestriction instanceof RequiredProperty){
             return intersects((RequiredProperty) oneRestriction, otherRestriction);
         }
-        if(oneRestriction instanceof RestrictedValueSetProperty){
-            return intersects((RestrictedValueSetProperty) oneRestriction, otherRestriction);
+        if(oneRestriction instanceof RestrictedValueSet){
+            return intersects((RestrictedValueSet) oneRestriction, otherRestriction);
         }
         if(oneRestriction instanceof RestrictedInterest){
             return intersects((RestrictedInterest) oneRestriction, otherRestriction);
@@ -21,12 +21,12 @@ public class Intersections {
         throw new IntersectionException("Unknown restriction type: " + oneRestriction);
     }
 
-    public static boolean intersects(RestrictedValueSetProperty oneRestriction, PropertyRestriction otherRestriction){
+    public static boolean intersects(RestrictedValueSet oneRestriction, PropertyRestriction otherRestriction){
         if(otherRestriction instanceof RequiredProperty){
             return intersects((RequiredProperty)otherRestriction, oneRestriction);
         }
-        if(otherRestriction instanceof RestrictedValueSetProperty){
-            return intersects(oneRestriction, (RestrictedValueSetProperty)otherRestriction);
+        if(otherRestriction instanceof RestrictedValueSet){
+            return intersects(oneRestriction, (RestrictedValueSet)otherRestriction);
         }
         if(otherRestriction instanceof RestrictedInterest){
             return intersects(oneRestriction, (RestrictedInterest)otherRestriction);
@@ -38,8 +38,8 @@ public class Intersections {
         if(otherRestriction instanceof RequiredProperty){
             return intersects((RequiredProperty)otherRestriction, oneRestriction);
         }
-        if(otherRestriction instanceof RestrictedValueSetProperty){
-            return intersects((RestrictedValueSetProperty)otherRestriction, oneRestriction);
+        if(otherRestriction instanceof RestrictedValueSet){
+            return intersects((RestrictedValueSet)otherRestriction, oneRestriction);
         }
         if(otherRestriction instanceof RestrictedInterest){
             return intersects(oneRestriction, (RestrictedInterest)otherRestriction);
@@ -55,7 +55,7 @@ public class Intersections {
         return true;
     }
 
-    public static boolean intersects(RestrictedValueSetProperty oneRestriction, RestrictedValueSetProperty otherRestriction){
+    public static boolean intersects(RestrictedValueSet oneRestriction, RestrictedValueSet otherRestriction){
         // If one of the values in one restriction is contained in the other, then there's an possible intersection
         Set<?> oneValues = oneRestriction.getAllowedValues();
         Set<?> otherValues = otherRestriction.getAllowedValues();
@@ -64,7 +64,7 @@ public class Intersections {
         return atLeastOneValueIsInOtherValuesSet;
     }
 
-    public static boolean intersects(RestrictedValueSetProperty oneRestriction, RestrictedInterest otherRestriction){
+    public static boolean intersects(RestrictedValueSet oneRestriction, RestrictedInterest otherRestriction){
         //As the first restriction is a set of values, the only intersection possible is that the second restriction
         //accepts any of the values. That will mean that one of the restricted values matches the second restriction.
         //Otherwise there's no way to intersect (probably one is a set of primitives and the second is for objects)

@@ -8,7 +8,7 @@ import java.util.Set;
  * contained by the restriction set
  * Created by ikari on 28/01/2015.
  */
-public class RestrictedValueSetProperty implements PropertyRestriction {
+public class RestrictedValueSet implements PropertyRestriction {
 
     private String propertyName;
     private Set<?> allowedValues;
@@ -29,8 +29,8 @@ public class RestrictedValueSetProperty implements PropertyRestriction {
         return Intersections.intersects(this, otherRestriction);
     }
 
-    public static RestrictedValueSetProperty create(String propertyName, Set<?> allowedValues) {
-        RestrictedValueSetProperty property = new RestrictedValueSetProperty();
+    public static RestrictedValueSet create(String propertyName, Set<?> allowedValues) {
+        RestrictedValueSet property = new RestrictedValueSet();
         property.allowedValues = allowedValues;
         property.propertyName = propertyName;
         return property;
