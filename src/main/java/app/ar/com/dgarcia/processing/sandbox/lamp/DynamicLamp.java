@@ -2,8 +2,8 @@ package app.ar.com.dgarcia.processing.sandbox.lamp;
 
 import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
 import app.ar.com.dgarcia.processing.sandbox.state.StatefulObject;
-import app.ar.com.dgarcia.processing.sandbox.vortex.MapBasedInterest;
 import app.ar.com.dgarcia.processing.sandbox.vortex.RequiredProperty;
+import app.ar.com.dgarcia.processing.sandbox.vortex.RestrictedInterest;
 import app.ar.com.dgarcia.processing.sandbox.vortex.RestrictedValueSetProperty;
 import ar.com.dgarcia.colecciones.sets.Sets;
 import ar.com.dgarcia.objectmapper.impl.TransformerMapper;
@@ -84,7 +84,7 @@ public class DynamicLamp extends StatefulObject implements Lamp {
     }
 
     private void listenToEvents() {
-        MapBasedInterest lampEventInterest = MapBasedInterest.create();
+        RestrictedInterest lampEventInterest = RestrictedInterest.create();
         lampEventInterest.addRestriction(RequiredProperty.create(LampEvent.positionX_FIELD));
         lampEventInterest.addRestriction(RequiredProperty.create(LampEvent.positionY_FIELD));
         lampEventInterest.addRestriction(RestrictedValueSetProperty.create(LampEvent.status_FIELD, Sets.newLinkedHashSet(LampStatus.ON.name(), LampStatus.OFF.name())));

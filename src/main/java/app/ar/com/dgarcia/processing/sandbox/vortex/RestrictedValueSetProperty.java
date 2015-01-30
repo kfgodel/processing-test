@@ -26,19 +26,7 @@ public class RestrictedValueSetProperty implements PropertyRestriction {
 
     @Override
     public boolean intersects(PropertyRestriction otherRestriction) {
-        if(otherRestriction instanceof RequiredProperty){
-            // Is less restrictive than us
-            return true;
-        }
-        if(otherRestriction instanceof RestrictedValueSetProperty){
-            // At least one of our values should be in the other restriction set to be instersection
-            Set<?> otherValues = ((RestrictedValueSetProperty) otherRestriction).allowedValues;
-            boolean atLeastOneValueIsInOtherRestriction = this.allowedValues.stream()
-                    .anyMatch(otherValues::contains);
-            return atLeastOneValueIsInOtherRestriction;
-        }
-        //It's a restriction type we don't know. Let's delegate
-        return otherRestriction.intersects(this);
+        return Intersections.intersects(this, otherRestriction);
     }
 
     public static RestrictedValueSetProperty create(String propertyName, Set<?> allowedValues) {
@@ -46,6 +34,10 @@ public class RestrictedValueSetProperty implements PropertyRestriction {
         property.allowedValues = allowedValues;
         property.propertyName = propertyName;
         return property;
+    }
+
+    public Set<?> getAllowedValues() {
+        return allowedValues;
     }
 
     @Override

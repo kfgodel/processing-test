@@ -22,9 +22,7 @@ public class RequiredProperty implements PropertyRestriction {
 
     @Override
     public boolean intersects(PropertyRestriction otherRestriction) {
-        // If the other restriction is for the same property then we intersect
-        // either is more restrictive than us, or equally restrictive
-        return true;
+        return Intersections.intersects(this, otherRestriction);
     }
 
     public static RequiredProperty create(String propertyName) {

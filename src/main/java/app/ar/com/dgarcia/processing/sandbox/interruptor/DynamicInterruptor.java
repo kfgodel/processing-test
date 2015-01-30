@@ -2,8 +2,8 @@ package app.ar.com.dgarcia.processing.sandbox.interruptor;
 
 import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
 import app.ar.com.dgarcia.processing.sandbox.state.StatefulObject;
-import app.ar.com.dgarcia.processing.sandbox.vortex.MapBasedInterest;
 import app.ar.com.dgarcia.processing.sandbox.vortex.RequiredProperty;
+import app.ar.com.dgarcia.processing.sandbox.vortex.RestrictedInterest;
 import app.ar.com.dgarcia.processing.sandbox.vortex.RestrictedValueSetProperty;
 import ar.com.dgarcia.colecciones.sets.Sets;
 import ar.com.dgarcia.objectmapper.impl.TransformerMapper;
@@ -101,7 +101,7 @@ public class DynamicInterruptor extends StatefulObject implements Interruptor {
     }
 
     private void startCommunications() {
-        MapBasedInterest interruptorEventInterest = MapBasedInterest.create();
+        RestrictedInterest interruptorEventInterest = RestrictedInterest.create();
         interruptorEventInterest.addRestriction(RequiredProperty.create(InterruptorEvent.positionX_FIELD));
         interruptorEventInterest.addRestriction(RequiredProperty.create(InterruptorEvent.positionY_FIELD));
         interruptorEventInterest.addRestriction(RestrictedValueSetProperty.create(InterruptorEvent.status_FIELD, Sets.newLinkedHashSet(InterruptorStatus.ON.name(), InterruptorStatus.OFF.name())));
