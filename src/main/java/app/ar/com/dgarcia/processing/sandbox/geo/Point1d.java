@@ -63,4 +63,8 @@ public interface Point1d extends IntSupplier {
     };
 
 
+    public static Point1d create(int value) {
+        return ()-> value;
+    }
+
 }

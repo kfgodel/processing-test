@@ -46,6 +46,15 @@ public class RestrictedInterest implements VortexInterest, PropertyRestriction {
 
     @Override
     public boolean isMetBy(Map<String, Object> message) {
+        if(propertyName != null){
+            //If used as nested restriction we need to take the object out from the outer map
+            Object propertyValue = message.get(propertyName);
+            if(!(propertyValue instanceof Map)){
+                // It should be a nested map to match our restrictions
+                return false;
+            }
+            message = (Map<String, Object>) propertyValue;
+        }
         for (PropertyRestriction restriction : propertyRestrictions) {
             if(!restriction.isMetBy(message)){
                 return false;
@@ -69,6 +78,13 @@ public class RestrictedInterest implements VortexInterest, PropertyRestriction {
         interest.propertyRestrictions = new ArrayList<>();
         return interest;
     }
+
+    public static RestrictedInterest create(String propertyName) {
+        RestrictedInterest restriction = create();
+        restriction.propertyName = propertyName;
+        return restriction;
+    }
+
 
     public void addRestriction(PropertyRestriction restriction) {
         this.propertyRestrictions.add(restriction);

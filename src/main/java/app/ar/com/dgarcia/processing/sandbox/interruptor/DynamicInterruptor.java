@@ -1,6 +1,7 @@
 package app.ar.com.dgarcia.processing.sandbox.interruptor;
 
 import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
+import app.ar.com.dgarcia.processing.sandbox.geo.Point2dImpl;
 import app.ar.com.dgarcia.processing.sandbox.state.StatefulObject;
 import app.ar.com.dgarcia.processing.sandbox.vortex.RequiredProperty;
 import app.ar.com.dgarcia.processing.sandbox.vortex.RestrictedInterest;
@@ -102,9 +103,11 @@ public class DynamicInterruptor extends StatefulObject implements Interruptor {
 
     private void startCommunications() {
         RestrictedInterest interruptorEventInterest = RestrictedInterest.create();
-        interruptorEventInterest.addRestriction(RequiredProperty.create(InterruptorEvent.positionX_FIELD));
-        interruptorEventInterest.addRestriction(RequiredProperty.create(InterruptorEvent.positionY_FIELD));
         interruptorEventInterest.addRestriction(RestrictedValueSetProperty.create(InterruptorEvent.status_FIELD, Sets.newLinkedHashSet(InterruptorStatus.ON.name(), InterruptorStatus.OFF.name())));
+        RestrictedInterest positionRestrictions = RestrictedInterest.create(InterruptorEvent.position_FIELD);
+        positionRestrictions.addRestriction(RequiredProperty.create(Point2dImpl.x_FIELD));
+        positionRestrictions.addRestriction(RequiredProperty.create(Point2dImpl.y_FIELD));
+        interruptorEventInterest.addRestriction(positionRestrictions);
 
         EmitterManifestImpl producerManifest = EmitterManifestImpl.create(interruptorEventInterest, this::setStream);
         getNode().declareEmitter(producerManifest);
