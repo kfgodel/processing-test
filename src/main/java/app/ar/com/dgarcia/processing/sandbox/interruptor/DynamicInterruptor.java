@@ -1,12 +1,9 @@
 package app.ar.com.dgarcia.processing.sandbox.interruptor;
 
 import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
-import app.ar.com.dgarcia.processing.sandbox.geo.Point2dImpl;
 import app.ar.com.dgarcia.processing.sandbox.state.StatefulObject;
-import app.ar.com.dgarcia.processing.sandbox.vortex.RequiredProperty;
+import app.ar.com.dgarcia.processing.sandbox.vortex.InterestBuilder;
 import app.ar.com.dgarcia.processing.sandbox.vortex.RestrictedInterest;
-import app.ar.com.dgarcia.processing.sandbox.vortex.RestrictedValueSet;
-import ar.com.dgarcia.colecciones.sets.Sets;
 import ar.com.dgarcia.objectmapper.impl.TransformerMapper;
 import ar.com.kfgodel.vortex.api.VortexEndpoint;
 import ar.com.kfgodel.vortex.impl.manifest.EmitterManifestImpl;
@@ -102,13 +99,7 @@ public class DynamicInterruptor extends StatefulObject implements Interruptor {
     }
 
     private void startCommunications() {
-        RestrictedInterest interruptorEventInterest = RestrictedInterest.create();
-        interruptorEventInterest.addRestriction(RestrictedValueSet.create(InterruptorEvent.status_FIELD, Sets.newLinkedHashSet(InterruptorStatus.ON.name(), InterruptorStatus.OFF.name())));
-        RestrictedInterest positionRestrictions = RestrictedInterest.create(InterruptorEvent.position_FIELD);
-        positionRestrictions.addRestriction(RequiredProperty.create(Point2dImpl.x_FIELD));
-        positionRestrictions.addRestriction(RequiredProperty.create(Point2dImpl.y_FIELD));
-        interruptorEventInterest.addRestriction(positionRestrictions);
-
+        RestrictedInterest interruptorEventInterest = InterestBuilder.create().forMessagesLike(InterruptorEvent.class);
         EmitterManifestImpl producerManifest = EmitterManifestImpl.create(interruptorEventInterest, this::setStream);
         getNode().declareEmitter(producerManifest);
     }

@@ -1,12 +1,9 @@
 package app.ar.com.dgarcia.processing.sandbox.lamp;
 
 import app.ar.com.dgarcia.processing.sandbox.geo.Point2d;
-import app.ar.com.dgarcia.processing.sandbox.geo.Point2dImpl;
 import app.ar.com.dgarcia.processing.sandbox.state.StatefulObject;
-import app.ar.com.dgarcia.processing.sandbox.vortex.RequiredProperty;
+import app.ar.com.dgarcia.processing.sandbox.vortex.InterestBuilder;
 import app.ar.com.dgarcia.processing.sandbox.vortex.RestrictedInterest;
-import app.ar.com.dgarcia.processing.sandbox.vortex.RestrictedValueSet;
-import ar.com.dgarcia.colecciones.sets.Sets;
 import ar.com.dgarcia.objectmapper.impl.TransformerMapper;
 import ar.com.kfgodel.vortex.api.VortexEndpoint;
 import ar.com.kfgodel.vortex.api.manifest.ReceiverManifest;
@@ -85,13 +82,7 @@ public class DynamicLamp extends StatefulObject implements Lamp {
     }
 
     private void listenToEvents() {
-        RestrictedInterest lampEventInterest = RestrictedInterest.create();
-        lampEventInterest.addRestriction(RestrictedValueSet.create(LampEvent.status_FIELD, Sets.newLinkedHashSet(LampStatus.ON.name(), LampStatus.OFF.name())));
-        RestrictedInterest positionRestrictions = RestrictedInterest.create(LampEvent.position_FIELD);
-        positionRestrictions.addRestriction(RequiredProperty.create(Point2dImpl.x_FIELD));
-        positionRestrictions.addRestriction(RequiredProperty.create(Point2dImpl.y_FIELD));
-        lampEventInterest.addRestriction(positionRestrictions);
-
+        RestrictedInterest lampEventInterest = InterestBuilder.create().forMessagesLike(LampEvent.class);
         vortexManifest = ReceiverManifestImpl.create(lampEventInterest, () ->
                 (message) -> onLampEventReceived((Map<String, Object>) message));
         getNode().declareReceiver(vortexManifest);
